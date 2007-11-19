@@ -1,0 +1,12 @@
+# http://module-build.sourceforge.net/META-spec.html
+#XXXXXXX This is a prototype!!!  It will change in the future!!! XXXXX#
+name:         Nmap-Parser
+version:      1.11
+version_from: Parser.pm
+installdirs:  site
+requires:
+    Storable:                      2
+    XML::Twig:                     3.16
+
+distribution_type: module
+generated_by: ExtUtils::MakeMaker version 6.30_01

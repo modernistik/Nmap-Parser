@@ -1,0 +1,15 @@
+Changes				Read for changes
+LICENSE				MIT
+Makefile.PL
+MANIFEST			This list of files
+Parser.pm			Core parser
+README				You should read it
+t/callback.t
+t/instance.t
+t/instance.xml
+t/nmap_results.xml
+t/parser.t
+t/scanner.t
+tools/nmap2sqlite.pl		Nmap scans to a DBI (SQLite) database
+tools/scan.pl			Scan a set of hosts with Nmap-Parser
+META.yml                        Module meta-data (added by MakeMaker)
