@@ -1,10 +1,14 @@
 Revision history for Perl extension Nmap::Parser.
 
-Latest version: http://sourceforge.net/projects/npx
+Latest version: http://code.google.com/p/nmap-parser/
 		http://search.cpan.org/~apersaud/Nmap-Parser/
 
 Website:        http://nmapparser.wordpress.com
+                http://code.google.com/p/nmap-parser/
 	
+Changes for 1.12
+	- Added references to Google Code Project page.
+
 Changes for 1.11
 	- Added parsing of distance information.
 	- Fixed bug #1671876 on tcp_service() always returning null
