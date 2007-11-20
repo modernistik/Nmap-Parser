@@ -88,7 +88,7 @@ my $np = new Nmap::Parser;
 
 $np->callback(\&insert_host);
 
-  #not implemented in this script, will finish for Nmap::Parser 1.00
+  #not implemented in this script, will finish later... ;-)
 #$np->parsescan($PATH_TO_NMAP, $NMAP_ARGS, @IPS);
 
 #SQLite is used for simplicity.
