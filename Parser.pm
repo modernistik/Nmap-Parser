@@ -1,20 +1,19 @@
 package Nmap::Parser;
 
-
+#Author: Anthony G Persaud
 use strict;
 use XML::Twig;
 use Storable qw(dclone);
 use vars qw($VERSION %D);
 
-$VERSION = 1.11;
+$VERSION = 1.12;
 
 sub new {
 
 my ($class,$self) = shift;
     $class        = ref($class) || $class;
 
-%{$self->{HOSTS}}   = ();
-%{$self->{SESSION}} = ();
+%{$self->{HOSTS}}   = %{$self->{SESSION}} = ();
 
 $self->{twig}     = new XML::Twig(
 	start_tag_handlers 	=>
@@ -303,7 +302,7 @@ sub __host_addr_tag_hdlr {
 
 	}
 
-return $addr_hashref;
+	return $addr_hashref;
 	}
 
 
@@ -1462,7 +1461,7 @@ L<http://www.cpanforum.com/dist/Nmap-Parser>
 =head2 Bug Reports
 
 Please submit any bugs to:
-L<http://sourceforge.net/tracker/?group_id=97509&atid=618345>
+L<http://code.google.com/p/nmap-parser/issues/list>
 
 B<Please make sure that you submit the xml-output file of the scan which you are having
 trouble.> This can be done by running your scan with the I<-oX filename.xml> nmap switch.
@@ -1472,13 +1471,13 @@ Please remove any important IP addresses for security reasons.
 
  nmap, XML::Twig
 
-The Nmap::Parser page can be found at: L<http://nmapparser.wordpress.com>.
+The Nmap::Parser page can be found at: L<http://nmapparser.wordpress.com> or L<http://code.google.com/p/nmap-parser/>.
 It contains the latest developments on the module. The nmap security scanner
 homepage can be found at: L<http://www.insecure.org/nmap/>.
 
 =head1 AUTHOR
 
-Anthony G Persaud <apersaud@gmail.com> L<http://www.anthonypersaud.com>
+Anthony G Persaud
 
 =head1 COPYRIGHT
 
