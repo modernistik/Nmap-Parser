@@ -6,6 +6,10 @@ Latest version: http://code.google.com/p/nmap-parser/
 Website:        http://nmapparser.wordpress.com
                 http://code.google.com/p/nmap-parser/
 	
+Changes for 1.13
+	- Added fingerprint() to Service object (thanks jpomiane)
+	- Added documentation.
+	
 Changes for 1.12
 	- Added references to Google Code Project page.
 

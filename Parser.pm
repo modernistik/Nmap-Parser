@@ -397,6 +397,7 @@ sub __host_service_tag_hdlr {
 	$service_hashref->{tunnel}     = $service->{att}->{tunnel};
 	$service_hashref->{method}     = $service->{att}->{method};
 	$service_hashref->{confidence} = $service->{att}->{conf};
+	$service_hashref->{fingerprint} = $service->{att}->{servicefp};
 	}
 
 	return $service_hashref;
@@ -1248,6 +1249,12 @@ Returns the RPC number.
 
 Returns the tunnel value. (If available)
 
+=item B<fingerprint()>
+
+Returns the service fingerprint. (If available)
+
+=back
+ 
 =item B<version()>
 
 Returns the version of the given product of the running service.
