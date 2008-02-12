@@ -12,4 +12,5 @@ t/parser.t
 t/scanner.t
 tools/nmap2sqlite.pl		Nmap scans to a DBI (SQLite) database
 tools/scan.pl			Scan a set of hosts with Nmap-Parser
+tools/pdev.pl			A Perl dev console, useful for debugging
 META.yml                        Module meta-data (added by MakeMaker)

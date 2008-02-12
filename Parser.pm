@@ -6,7 +6,7 @@ use XML::Twig;
 use Storable qw(dclone);
 use vars qw($VERSION %D);
 
-$VERSION = 1.12;
+$VERSION = 1.13;
 
 sub new {
 
