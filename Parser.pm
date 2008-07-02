@@ -6,39 +6,37 @@ use XML::Twig;
 use Storable qw(dclone);
 use vars qw($VERSION %D);
 
-$VERSION = 1.13;
+$VERSION = 1.14;
 
 sub new {
 
-my ($class,$self) = shift;
-    $class        = ref($class) || $class;
+    my ( $class, $self ) = shift;
+    $class = ref($class) || $class;
 
-%{$self->{HOSTS}}   = %{$self->{SESSION}} = ();
+    %{ $self->{HOSTS} } = %{ $self->{SESSION} } = ();
 
-$self->{twig}     = new XML::Twig(
-	start_tag_handlers 	=>
-		{nmaprun => \&_nmaprun_start_tag_hdlr },
-		
-	twig_roots 		=> {
-		scaninfo => \&_scaninfo_tag_hdlr,
-		finished => \&_finished_tag_hdlr,
-		host 	 => \&_host_tag_hdlr
-				},
-	ignore_elts 	=> {
-		addport 	=> 1,
-		debugging	=> 1,
-		verbose		=> 1,
-		hosts		=> 1,
-                taskbegin       => 1,
-                taskend         => 1,
-                taskprogress    => 1
-		}
-		);
+    $self->{twig} = new XML::Twig(
+        start_tag_handlers => { nmaprun => \&_nmaprun_start_tag_hdlr },
 
-bless ($self,$class);
-return $self;
+        twig_roots => {
+            scaninfo => \&_scaninfo_tag_hdlr,
+            finished => \&_finished_tag_hdlr,
+            host     => \&_host_tag_hdlr
+        },
+        ignore_elts => {
+            addport      => 1,
+            debugging    => 1,
+            verbose      => 1,
+            hosts        => 1,
+            taskbegin    => 1,
+            taskend      => 1,
+            taskprogress => 1
+        }
+    );
+
+    bless( $self, $class );
+    return $self;
 }
-
 
 #/*****************************************************************************/
 # NMAP::PARSER OBJECT METHODS
@@ -47,141 +45,145 @@ return $self;
 #Safe parse and parsefile will return $@ which will contain the error
 #that occured if the parsing failed (it might be empty when no error occurred)
 sub _init {
-	my $self = shift;
-	$D{callback} = $self->{callback};
+    my $self = shift;
+    $D{callback} = $self->{callback};
 }
 
 sub _clean {
-	my $self = shift;
-	$self->{SESSION} = dclone($D{$$}{SESSION}) if($D{$$}{SESSION});
-	$self->{HOSTS}   = dclone($D{$$}{HOSTS}  ) if($D{$$}{HOSTS}  );
-	delete $D{$$};
-	delete $D{callback};
+    my $self = shift;
+    $self->{SESSION} = dclone( $D{$$}{SESSION} ) if ( $D{$$}{SESSION} );
+    $self->{HOSTS}   = dclone( $D{$$}{HOSTS} )   if ( $D{$$}{HOSTS} );
+    delete $D{$$};
+    delete $D{callback};
 }
 
 sub callback {
-	my $self = shift;
-	my $callback = shift; #first arg is CODE
-	if(ref($callback) eq 'CODE'){
-		$self->{callback}{coderef} = $callback;
-		$self->{callback}{is_registered} = 1;
-	} else {
-		$self->{callback}{is_registered} = 0;
-	}
-	
-	#returns if a callback is registered or not
-	return $self->{callback}{is_registered};
+    my $self     = shift;
+    my $callback = shift;    #first arg is CODE
+    if ( ref($callback) eq 'CODE' ) {
+        $self->{callback}{coderef}       = $callback;
+        $self->{callback}{is_registered} = 1;
+    }
+    else {
+        $self->{callback}{is_registered} = 0;
+    }
+
+    #returns if a callback is registered or not
+    return $self->{callback}{is_registered};
 }
 
 sub parse {
-	my $self = shift;
-	$self->_init();
-	$self->{twig}->safe_parse(@_);
-	if($@){die $@;}
-	$self->_clean();
-	$self->purge;
-	return $self;
+    my $self = shift;
+    $self->_init();
+    $self->{twig}->safe_parse(@_);
+    if ($@) { die $@; }
+    $self->_clean();
+    $self->purge;
+    return $self;
 }
 
 sub parsefile {
-	my $self = shift;
-	$self->_init();
-	$self->{twig}->safe_parsefile(@_);
-	if($@){die $@;}
-	$self->_clean();
-	$self->purge;
-	return $self;
+    my $self = shift;
+    $self->_init();
+    $self->{twig}->safe_parsefile(@_);
+    if ($@) { die $@; }
+    $self->_clean();
+    $self->purge;
+    return $self;
 }
 
 sub parsescan {
-	my $self = shift;
-	my $nmap = shift;
-	my $args = shift;
-	my @ips = @_;
-	my $FH;
+    my $self = shift;
+    my $nmap = shift;
+    my $args = shift;
+    my @ips  = @_;
+    my $FH;
 
-	if($args =~ /-o(?:X|N|G)/){
-		die "[Nmap-Parser] Cannot pass option '-oX', '-oN' or '-oG' to parsecan()";
-	}
-	
-	my $cmd = "$nmap $args -v -v -v -oX - ".(join ' ',@ips);
-	open $FH, "$cmd |" || die "[Nmap-Parser] Could not perform nmap scan - $!";
-	$self->_init();
-	$self->parse($FH);
-	close $FH;
-	$self->_clean();
-	$self->purge;
-	return $self;
-	
+    if ( $args =~ /-o(?:X|N|G)/ ) {
+        die
+"[Nmap-Parser] Cannot pass option '-oX', '-oN' or '-oG' to parsecan()";
+    }
+
+    my $cmd = "$nmap $args -v -v -v -oX - " . ( join ' ', @ips );
+    open $FH, "$cmd |" || die "[Nmap-Parser] Could not perform nmap scan - $!";
+    $self->_init();
+    $self->parse($FH);
+    close $FH;
+    $self->_clean();
+    $self->purge;
+    return $self;
+
 }
 
-
 sub purge {
-	my $self = shift;
-	$self->{twig}->purge;
-	return $self;
+    my $self = shift;
+    $self->{twig}->purge;
+    return $self;
 }
 
 sub ipv4_sort {
-	my $self = shift;
-	
-	return (sort {
-		my @ipa = split('\.',$a);
-		my @ipb = split('\.',$b);
-			$ipa[0] <=> $ipb[0] ||
-			$ipa[1] <=> $ipb[1] ||
-			$ipa[2] <=> $ipb[2] ||
-			$ipa[3] <=> $ipb[3]
-		} @_);
-}
+    my $self = shift;
 
+    return (
+        sort {
+            my @ipa = split( '\.', $a );
+            my @ipb = split( '\.', $b );
+                 $ipa[0] <=> $ipb[0]
+              || $ipa[1] <=> $ipb[1]
+              || $ipa[2] <=> $ipb[2]
+              || $ipa[3] <=> $ipb[3]
+          } @_
+    );
+}
 
 #MAIN SCAN INFORMATION
 sub get_session {
-	my $self = shift;
-	my $obj = Nmap::Parser::Session->new($self->{SESSION});
-	return $obj;
+    my $self = shift;
+    my $obj  = Nmap::Parser::Session->new( $self->{SESSION} );
+    return $obj;
 }
 
 #HOST STUFF
 sub get_host {
-	my ($self,$ip) = (@_);
-	if($ip eq ''){
-		warn "[Nmap-Parser] No IP address given to get_host()\n";return undef;
-	}
-	$self->{HOSTS}{$ip};	
+    my ( $self, $ip ) = (@_);
+    if ( $ip eq '' ) {
+        warn "[Nmap-Parser] No IP address given to get_host()\n";
+        return undef;
+    }
+    $self->{HOSTS}{$ip};
 }
 
 sub del_host {
-	my ($self,$ip) = (@_);
-	if($ip eq ''){
-		warn "[Nmap-Parser] No IP address given to del_host()\n";
-		return undef;
-	}
-	delete $self->{HOSTS}{$ip};
+    my ( $self, $ip ) = (@_);
+    if ( $ip eq '' ) {
+        warn "[Nmap-Parser] No IP address given to del_host()\n";
+        return undef;
+    }
+    delete $self->{HOSTS}{$ip};
 }
 
 sub all_hosts {
-	my $self = shift;
-	my $status = shift || '';
-	
-	return (values %{$self->{HOSTS}}) if($status eq '');
-	
-	my @hosts = grep {$_->{status} eq $status} (values %{$self->{HOSTS}});
-	return @hosts;
+    my $self = shift;
+    my $status = shift || '';
+
+    return ( values %{ $self->{HOSTS} } ) if ( $status eq '' );
+
+    my @hosts = grep { $_->{status} eq $status } ( values %{ $self->{HOSTS} } );
+    return @hosts;
 }
 
 sub get_ips {
-	my $self = shift;
-	my $status = shift || '';
-	
-	return $self->ipv4_sort(keys %{$self->{HOSTS}}) if($status eq '');
-	
-	my @hosts = grep {$self->{HOSTS}{$_}{status} eq $status} (keys %{$self->{HOSTS}});
-	return $self->ipv4_sort(@hosts);
-	
-}
+    my $self = shift;
+    my $status = shift || '';
 
+    return $self->ipv4_sort( keys %{ $self->{HOSTS} } ) if ( $status eq '' );
+
+    my @hosts =
+      grep { $self->{HOSTS}{$_}{status} eq $status }
+      ( keys %{ $self->{HOSTS} } );
+    return $self->ipv4_sort(@hosts);
+
+}
 
 #/*****************************************************************************/
 # PARSING TAG HANDLERS FOR XML::TWIG
@@ -189,328 +191,324 @@ sub get_ips {
 
 sub _nmaprun_start_tag_hdlr {
 
-	my ($twig, $tag) = @_;
-	
-$D{$$}{SESSION}{start_time}  = $tag->{att}->{start};
-$D{$$}{SESSION}{nmap_version}= $tag->{att}->{version};
-$D{$$}{SESSION}{start_str}   = $tag->{att}->{startstr};
-$D{$$}{SESSION}{xml_version} = $tag->{att}->{xmloutputversion};
-$D{$$}{SESSION}{scan_args}   = $tag->{att}->{args};
-$D{$$}{SESSION}              = Nmap::Parser::Session->new($D{$$}{SESSION});
+    my ( $twig, $tag ) = @_;
 
-$twig->purge;	
+    $D{$$}{SESSION}{start_time}   = $tag->{att}->{start};
+    $D{$$}{SESSION}{nmap_version} = $tag->{att}->{version};
+    $D{$$}{SESSION}{start_str}    = $tag->{att}->{startstr};
+    $D{$$}{SESSION}{xml_version}  = $tag->{att}->{xmloutputversion};
+    $D{$$}{SESSION}{scan_args}    = $tag->{att}->{args};
+    $D{$$}{SESSION} = Nmap::Parser::Session->new( $D{$$}{SESSION} );
+
+    $twig->purge;
 
 }
 
 sub _scaninfo_tag_hdlr {
-	my ($twig, $tag) = @_;
-	my $type        = $tag->{att}->{type};
-        my $proto       = $tag->{att}->{protocol};
-	my $numservices = $tag->{att}->{numservices};
-	
-	if(defined($type)){ #there can be more than one type in one scan
-		$D{$$}{SESSION}{type}{$type}        = $proto;
-		$D{$$}{SESSION}{numservices}{$type} = $numservices;
-	}
-	$twig->purge;
+    my ( $twig, $tag ) = @_;
+    my $type        = $tag->{att}->{type};
+    my $proto       = $tag->{att}->{protocol};
+    my $numservices = $tag->{att}->{numservices};
+
+    if ( defined($type) ) {    #there can be more than one type in one scan
+        $D{$$}{SESSION}{type}{$type}        = $proto;
+        $D{$$}{SESSION}{numservices}{$type} = $numservices;
+    }
+    $twig->purge;
 }
-
-
 
 sub _finished_tag_hdlr {
-	my ($twig, $tag) = @_;
-	$D{$$}{SESSION}{finish_time} = $tag->{att}->{time};
-	$D{$$}{SESSION}{time_str}     = $tag->{att}->{timestr};
-	$twig->purge;
+    my ( $twig, $tag ) = @_;
+    $D{$$}{SESSION}{finish_time} = $tag->{att}->{time};
+    $D{$$}{SESSION}{time_str}    = $tag->{att}->{timestr};
+    $twig->purge;
 }
-
-
 
 #parses all the host information in one swoop (calling __host_*_tag_hdlrs)
 sub _host_tag_hdlr {
-	my ($twig,$tag) = @_;
-	my $id = undef;
-	
-	return undef unless(defined $tag);
-	#GET ADDRESS INFO
-	my $addr_hashref;
-	$addr_hashref = __host_addr_tag_hdlr($tag);
-	#use this as the identifier
-	$id           = $addr_hashref->{ipv4} ||
-			$addr_hashref->{ipv6} ||
-			$addr_hashref->{mac}; #worstcase use MAC
-	
-	$D{$$}{HOSTS}{$id}{addrs} = $addr_hashref;
-	
-	return undef unless(defined($id) || $id ne '');
-	
-	#GET HOSTNAMES
-	$D{$$}{HOSTS}{$id}{hostnames} = __host_hostnames_tag_hdlr($tag);
-	
-	#GET STATUS
-	$D{$$}{HOSTS}{$id}{status} = $tag->first_child('status')->{att}->{state};
-    
-	#CONTINUE PROCESSING IF STATUS IS UP - OTHERWISE NO MORE XML
-	if(lc($D{$$}{HOSTS}{$id}{status}) eq 'up'){
-	
-	    $D{$$}{HOSTS}{$id}{ports}         = __host_port_tag_hdlr($tag);
-	    $D{$$}{HOSTS}{$id}{os}            = __host_os_tag_hdlr($tag);
-	    $D{$$}{HOSTS}{$id}{uptime}        = __host_uptime_tag_hdlr($tag);
-	    $D{$$}{HOSTS}{$id}{tcpsequence}   = __host_tcpsequence_tag_hdlr($tag);
-	    $D{$$}{HOSTS}{$id}{ipidsequence}  = __host_ipidsequence_tag_hdlr($tag);
-	    $D{$$}{HOSTS}{$id}{tcptssequence} = __host_tcptssequence_tag_hdlr($tag);
-	    $D{$$}{HOSTS}{$id}{distance}      = __host_distance_tag_hdlr($tag); #returns simple value
-	    
-	    
-	
-	}	
-	#CREATE HOST OBJECT FOR USER
-	$D{$$}{HOSTS}{$id} = Nmap::Parser::Host->new($D{$$}{HOSTS}{$id});
-	
-	if($D{callback}{is_registered}){
-		&{$D{callback}{coderef}}($D{$$}{HOSTS}{$id});
-		delete $D{$$}{HOSTS}{$id};
-	}
+    my ( $twig, $tag ) = @_;
+    my $id = undef;
 
-	$twig->purge;
-    
+    return undef unless ( defined $tag );
+
+    #GET ADDRESS INFO
+    my $addr_hashref;
+    $addr_hashref = __host_addr_tag_hdlr($tag);
+
+    #use this as the identifier
+    $id =
+         $addr_hashref->{ipv4}
+      || $addr_hashref->{ipv6}
+      || $addr_hashref->{mac};    #worstcase use MAC
+
+    $D{$$}{HOSTS}{$id}{addrs} = $addr_hashref;
+
+    return undef unless ( defined($id) || $id ne '' );
+
+    #GET HOSTNAMES
+    $D{$$}{HOSTS}{$id}{hostnames} = __host_hostnames_tag_hdlr($tag);
+
+    #GET STATUS
+    $D{$$}{HOSTS}{$id}{status} = $tag->first_child('status')->{att}->{state};
+
+    #CONTINUE PROCESSING IF STATUS IS UP - OTHERWISE NO MORE XML
+    if ( lc( $D{$$}{HOSTS}{$id}{status} ) eq 'up' ) {
+
+        $D{$$}{HOSTS}{$id}{ports}         = __host_port_tag_hdlr($tag);
+        $D{$$}{HOSTS}{$id}{os}            = __host_os_tag_hdlr($tag);
+        $D{$$}{HOSTS}{$id}{uptime}        = __host_uptime_tag_hdlr($tag);
+        $D{$$}{HOSTS}{$id}{tcpsequence}   = __host_tcpsequence_tag_hdlr($tag);
+        $D{$$}{HOSTS}{$id}{ipidsequence}  = __host_ipidsequence_tag_hdlr($tag);
+        $D{$$}{HOSTS}{$id}{tcptssequence} = __host_tcptssequence_tag_hdlr($tag);
+        $D{$$}{HOSTS}{$id}{distance} =
+          __host_distance_tag_hdlr($tag);    #returns simple value
+
+    }
+
+    #CREATE HOST OBJECT FOR USER
+    $D{$$}{HOSTS}{$id} = Nmap::Parser::Host->new( $D{$$}{HOSTS}{$id} );
+
+    if ( $D{callback}{is_registered} ) {
+        &{ $D{callback}{coderef} }( $D{$$}{HOSTS}{$id} );
+        delete $D{$$}{HOSTS}{$id};
+    }
+
+    $twig->purge;
+
 }
-
-
-
-
-
-
 
 sub __host_addr_tag_hdlr {
-	my $tag = shift;
-	my $addr_hashref;
-	#children() will return all children with tag name address
-	for my $addr ($tag->children('address')){
-		if(lc($addr->{att}->{addrtype}) eq 'mac')
-		{
-			#we'll assume for now, only 1 MAC address per system
-			$addr_hashref->{mac}{addr} = $addr->{att}->{addr};
-			$addr_hashref->{mac}{vendor} = $addr->{att}->{vendor};
-		}
-		elsif(lc($addr->{att}->{addrtype}) eq 'ipv4') {
-			$addr_hashref->{ipv4} = $addr->{att}->{addr};
-		} #support for ipv6? we'll see
-		elsif(lc($addr->{att}->{addrtype}) eq 'ipv6') {
-			$addr_hashref->{ipv6} = $addr->{att}->{addr};
-		}
+    my $tag = shift;
+    my $addr_hashref;
 
-	}
+    #children() will return all children with tag name address
+    for my $addr ( $tag->children('address') ) {
+        if ( lc( $addr->{att}->{addrtype} ) eq 'mac' ) {
 
-	return $addr_hashref;
-	}
+            #we'll assume for now, only 1 MAC address per system
+            $addr_hashref->{mac}{addr}   = $addr->{att}->{addr};
+            $addr_hashref->{mac}{vendor} = $addr->{att}->{vendor};
+        }
+        elsif ( lc( $addr->{att}->{addrtype} ) eq 'ipv4' ) {
+            $addr_hashref->{ipv4} = $addr->{att}->{addr};
+        }    #support for ipv6? we'll see
+        elsif ( lc( $addr->{att}->{addrtype} ) eq 'ipv6' ) {
+            $addr_hashref->{ipv6} = $addr->{att}->{addr};
+        }
 
+    }
 
+    return $addr_hashref;
+}
 
 sub __host_hostnames_tag_hdlr {
-	my $tag = shift;
-	
-	my $hostnames_tag = $tag->first_child('hostnames');
-	return undef unless(defined $hostnames_tag);
-	
-	my @hostnames;
-	
-	for my $name ($hostnames_tag->children('hostname'))
-	{
-		push @hostnames, $name->{att}->{name};
-	}
-	
-	return \@hostnames;
+    my $tag = shift;
+
+    my $hostnames_tag = $tag->first_child('hostnames');
+    return undef unless ( defined $hostnames_tag );
+
+    my @hostnames;
+
+    for my $name ( $hostnames_tag->children('hostname') ) {
+        push @hostnames, $name->{att}->{name};
+    }
+
+    return \@hostnames;
 
 }
-
 
 sub __host_port_tag_hdlr {
-	my $tag = shift;
-	my ($port_hashref,$ports_tag);
-	
-	$ports_tag = $tag->first_child('ports');
-	
-	return undef unless(defined $ports_tag);
-	
-	#Parsing Extraports
-	my $extraports_tag = $ports_tag->first_child('extraports');
-	if(defined $extraports_tag && $extraports_tag ne ''){
-		$port_hashref->{extraports}{state} = $extraports_tag->{att}->{state};
-		$port_hashref->{extraports}{count} = $extraports_tag->{att}->{count};
-	}
-	
-	#Parsing regular port information
-	
-	my ($tcp_port_count, $udp_port_count) = (0,0);
-	
-	for my $port_tag ($ports_tag->children('port')){
-		my $proto  = $port_tag->{att}->{protocol};
-		my $portid = $port_tag->{att}->{portid};
-		my $state  = $port_tag->first_child('state');
-		my $owner  = $port_tag->first_child('owner') || undef;
-		
-		$tcp_port_count++ if($proto eq 'tcp');
-		$udp_port_count++ if($proto eq 'udp');
-		
-		$port_hashref->{$proto}{$portid}{state} = $state->{att}->{state} || 'unknown' 
-			if($state ne '');
-		
-		#GET SERVICE INFORMATION
-		$port_hashref->{$proto}{$portid}{service}        = __host_service_tag_hdlr($port_tag,$portid)
-			if(defined($proto) && defined($portid));
-		
-		#GET OWNER INFORMATION
-		$port_hashref->{$proto}{$portid}{service}{owner} = $owner->{att}->{name}
-			if(defined($owner));
-			
-		#These are added at the end, otherwise __host_service_tag_hdlr will overwrite
-		#GET PORT STATE
-		
-		
-				
-	}
-	
-	$port_hashref->{tcp_port_count} = $tcp_port_count;
-	$port_hashref->{udp_port_count} = $udp_port_count;
-	
-	return $port_hashref;
-	
-	
-}
+    my $tag = shift;
+    my ( $port_hashref, $ports_tag );
 
+    $ports_tag = $tag->first_child('ports');
+
+    return undef unless ( defined $ports_tag );
+
+    #Parsing Extraports
+    my $extraports_tag = $ports_tag->first_child('extraports');
+    if ( defined $extraports_tag && $extraports_tag ne '' ) {
+        $port_hashref->{extraports}{state} = $extraports_tag->{att}->{state};
+        $port_hashref->{extraports}{count} = $extraports_tag->{att}->{count};
+    }
+
+    #Parsing regular port information
+
+    my ( $tcp_port_count, $udp_port_count ) = ( 0, 0 );
+
+    for my $port_tag ( $ports_tag->children('port') ) {
+        my $proto  = $port_tag->{att}->{protocol};
+        my $portid = $port_tag->{att}->{portid};
+        my $state  = $port_tag->first_child('state');
+        my $owner  = $port_tag->first_child('owner') || undef;
+
+        $tcp_port_count++ if ( $proto eq 'tcp' );
+        $udp_port_count++ if ( $proto eq 'udp' );
+
+        $port_hashref->{$proto}{$portid}{state} = $state->{att}->{state}
+          || 'unknown'
+          if ( $state ne '' );
+
+        #GET SERVICE INFORMATION
+        $port_hashref->{$proto}{$portid}{service} =
+          __host_service_tag_hdlr( $port_tag, $portid )
+          if ( defined($proto) && defined($portid) );
+
+        #GET OWNER INFORMATION
+        $port_hashref->{$proto}{$portid}{service}{owner} = $owner->{att}->{name}
+          if ( defined($owner) );
+
+   #These are added at the end, otherwise __host_service_tag_hdlr will overwrite
+   #GET PORT STATE
+
+    }
+
+    $port_hashref->{tcp_port_count} = $tcp_port_count;
+    $port_hashref->{udp_port_count} = $udp_port_count;
+
+    return $port_hashref;
+
+}
 
 sub __host_service_tag_hdlr {
-	my $tag = shift;
-	my $portid = shift; #need a way to remember what port this service runs on
-	my $service = $tag->first_child('service[@name]');
-	my $service_hashref;
-	$service_hashref->{port}       = $portid;
-	
-	if(defined $service){
-	$service_hashref->{name}       = $service->{att}->{name}  || 'unknown';
-	$service_hashref->{version}    = $service->{att}->{version};
-	$service_hashref->{product}    = $service->{att}->{product};
-	$service_hashref->{extrainfo}  = $service->{att}->{extrainfo};
-	$service_hashref->{proto}      = $service->{att}->{proto} || $service->{att}->{protocol} || 'unknown';
-	$service_hashref->{rpcnum}     = $service->{att}->{rpcnum};
-	$service_hashref->{tunnel}     = $service->{att}->{tunnel};
-	$service_hashref->{method}     = $service->{att}->{method};
-	$service_hashref->{confidence} = $service->{att}->{conf};
-	$service_hashref->{fingerprint} = $service->{att}->{servicefp};
-	}
+    my $tag    = shift;
+    my $portid = shift;   #need a way to remember what port this service runs on
+    my $service = $tag->first_child('service[@name]');
+    my $service_hashref;
+    $service_hashref->{port} = $portid;
 
-	return $service_hashref;
+    if ( defined $service ) {
+        $service_hashref->{name}      = $service->{att}->{name} || 'unknown';
+        $service_hashref->{version}   = $service->{att}->{version};
+        $service_hashref->{product}   = $service->{att}->{product};
+        $service_hashref->{extrainfo} = $service->{att}->{extrainfo};
+        $service_hashref->{proto} =
+             $service->{att}->{proto}
+          || $service->{att}->{protocol}
+          || 'unknown';
+        $service_hashref->{rpcnum}      = $service->{att}->{rpcnum};
+        $service_hashref->{tunnel}      = $service->{att}->{tunnel};
+        $service_hashref->{method}      = $service->{att}->{method};
+        $service_hashref->{confidence}  = $service->{att}->{conf};
+        $service_hashref->{fingerprint} = $service->{att}->{servicefp};
+    }
+
+    return $service_hashref;
 }
 
-
 sub __host_os_tag_hdlr {
-	my $tag = shift;
-	my $os_tag = $tag->first_child('os');
-	my $os_hashref;
-	my $portused_tag;
-	my $os_fingerprint;
-	
-	if(defined $os_tag){
-	#get the open port used to match os
-	$portused_tag = $os_tag->first_child("portused[\@state='open']"); 
-	$os_hashref->{portused}{open} = $portused_tag->{att}->{portid}   if(defined $portused_tag);
-	
-	#get the closed port used to match os
-	$portused_tag = $os_tag->first_child("portused[\@state='closed']");
-	$os_hashref->{portused}{closed} = $portused_tag->{att}->{portid} if(defined $portused_tag);
-	
-	#os fingerprint
+    my $tag    = shift;
+    my $os_tag = $tag->first_child('os');
+    my $os_hashref;
+    my $portused_tag;
+    my $os_fingerprint;
+
+    if ( defined $os_tag ) {
+
+        #get the open port used to match os
+        $portused_tag = $os_tag->first_child("portused[\@state='open']");
+        $os_hashref->{portused}{open} = $portused_tag->{att}->{portid}
+          if ( defined $portused_tag );
+
+        #get the closed port used to match os
+        $portused_tag = $os_tag->first_child("portused[\@state='closed']");
+        $os_hashref->{portused}{closed} = $portused_tag->{att}->{portid}
+          if ( defined $portused_tag );
+
+        #os fingerprint
         $os_fingerprint = $os_tag->first_child("osfingerprint");
-        $os_hashref->{os_fingerprint} = $os_fingerprint->{'att'}->{'fingerprint'} if(defined $os_fingerprint);
+        $os_hashref->{os_fingerprint} =
+          $os_fingerprint->{'att'}->{'fingerprint'}
+          if ( defined $os_fingerprint );
 
-	#This will go in Nmap::Parser::Host::OS
-	my $osmatch_index = 0;
-	for my $osmatch ($os_tag->children('osmatch')){
-		$os_hashref->{osmatch_name}   [$osmatch_index] = $osmatch->{att}->{name};
-		$os_hashref->{osmatch_name_accuracy}[$osmatch_index] = $osmatch->{att}->{accuracy};
-		$osmatch_index++;
-		}
-	$os_hashref->{'osmatch_count'} = $osmatch_index;
-	
-	#parse osclass tags
-	my $osclass_index = 0;
-        for my $osclass ($os_tag->children('osclass')){
-		$os_hashref->{osclass_osfamily}[$osclass_index] = $osclass->{att}->{osfamily};
-		$os_hashref->{osclass_osgen}   [$osclass_index] = $osclass->{att}->{osgen};
-		$os_hashref->{osclass_vendor}  [$osclass_index] = $osclass->{att}->{vendor};
-		$os_hashref->{osclass_type}    [$osclass_index] = $osclass->{att}->{type};
-		$os_hashref->{osclass_class_accuracy}[$osclass_index] = $osclass->{att}->{accuracy};
-		$osclass_index++;		
-	}
-	$os_hashref->{'osclass_count'} = $osclass_index;
-	}
-	
+        #This will go in Nmap::Parser::Host::OS
+        my $osmatch_index = 0;
+        for my $osmatch ( $os_tag->children('osmatch') ) {
+            $os_hashref->{osmatch_name}[$osmatch_index] =
+              $osmatch->{att}->{name};
+            $os_hashref->{osmatch_name_accuracy}[$osmatch_index] =
+              $osmatch->{att}->{accuracy};
+            $osmatch_index++;
+        }
+        $os_hashref->{'osmatch_count'} = $osmatch_index;
 
-	return $os_hashref;	
-	
+        #parse osclass tags
+        my $osclass_index = 0;
+        for my $osclass ( $os_tag->children('osclass') ) {
+            $os_hashref->{osclass_osfamily}[$osclass_index] =
+              $osclass->{att}->{osfamily};
+            $os_hashref->{osclass_osgen}[$osclass_index] =
+              $osclass->{att}->{osgen};
+            $os_hashref->{osclass_vendor}[$osclass_index] =
+              $osclass->{att}->{vendor};
+            $os_hashref->{osclass_type}[$osclass_index] =
+              $osclass->{att}->{type};
+            $os_hashref->{osclass_class_accuracy}[$osclass_index] =
+              $osclass->{att}->{accuracy};
+            $osclass_index++;
+        }
+        $os_hashref->{'osclass_count'} = $osclass_index;
+    }
+
+    return $os_hashref;
+
 }
 
 sub __host_uptime_tag_hdlr {
-	my $tag = shift;
-	my $uptime = $tag->first_child('uptime');
-	my $uptime_hashref;
-	
-	if(defined $uptime){
-		$uptime_hashref->{seconds}  = $uptime->{att}->{seconds};
-		$uptime_hashref->{lastboot} = $uptime->{att}->{lastboot};
-		
-	}
-	
-	return $uptime_hashref;
-	
-}
+    my $tag    = shift;
+    my $uptime = $tag->first_child('uptime');
+    my $uptime_hashref;
 
+    if ( defined $uptime ) {
+        $uptime_hashref->{seconds}  = $uptime->{att}->{seconds};
+        $uptime_hashref->{lastboot} = $uptime->{att}->{lastboot};
+
+    }
+
+    return $uptime_hashref;
+
+}
 
 sub __host_tcpsequence_tag_hdlr {
-	my $tag = shift;
-	my $sequence = $tag->first_child('tcpsequence');
-	my $sequence_hashref;
-	return undef unless($sequence);
-	$sequence_hashref->{class} = $sequence->{att}->{class};
-	$sequence_hashref->{values} = $sequence->{att}->{values};
-	$sequence_hashref->{index} = $sequence->{att}->{index};
-	
-	return $sequence_hashref;
-	
-	}
+    my $tag      = shift;
+    my $sequence = $tag->first_child('tcpsequence');
+    my $sequence_hashref;
+    return undef unless ($sequence);
+    $sequence_hashref->{class}  = $sequence->{att}->{class};
+    $sequence_hashref->{values} = $sequence->{att}->{values};
+    $sequence_hashref->{index}  = $sequence->{att}->{index};
 
+    return $sequence_hashref;
 
-sub __host_ipidsequence_tag_hdlr {
-	my $tag = shift;
-	my $sequence = $tag->first_child('ipidsequence');
-	my $sequence_hashref;
-	return undef unless($sequence);
-	$sequence_hashref->{class} = $sequence->{att}->{class};
-	$sequence_hashref->{values} = $sequence->{att}->{values};
-	return $sequence_hashref;
-	
-	}
-
-
-sub __host_tcptssequence_tag_hdlr {
-	my $tag = shift;
-	my $sequence = $tag->first_child('tcptssequence');
-	my $sequence_hashref;
-	return undef unless($sequence);
-	$sequence_hashref->{class} = $sequence->{att}->{class};
-	$sequence_hashref->{values} = $sequence->{att}->{values};
-	return $sequence_hashref;
-	}
-
-sub __host_distance_tag_hdlr {
-	my $tag = shift;
-	my $distance = $tag->first_child('distance');
-	return undef unless($distance);
-	return $distance->{att}->{value};
 }
 
+sub __host_ipidsequence_tag_hdlr {
+    my $tag      = shift;
+    my $sequence = $tag->first_child('ipidsequence');
+    my $sequence_hashref;
+    return undef unless ($sequence);
+    $sequence_hashref->{class}  = $sequence->{att}->{class};
+    $sequence_hashref->{values} = $sequence->{att}->{values};
+    return $sequence_hashref;
 
+}
+
+sub __host_tcptssequence_tag_hdlr {
+    my $tag      = shift;
+    my $sequence = $tag->first_child('tcptssequence');
+    my $sequence_hashref;
+    return undef unless ($sequence);
+    $sequence_hashref->{class}  = $sequence->{att}->{class};
+    $sequence_hashref->{values} = $sequence->{att}->{values};
+    return $sequence_hashref;
+}
+
+sub __host_distance_tag_hdlr {
+    my $tag      = shift;
+    my $distance = $tag->first_child('distance');
+    return undef unless ($distance);
+    return $distance->{att}->{value};
+}
 
 #/*****************************************************************************/
 # NMAP::PARSER::SESSION
@@ -520,43 +518,43 @@ package Nmap::Parser::Session;
 use vars qw($AUTOLOAD);
 
 sub new {
-	my $class = shift;
-	$class    = ref($class) || $class;
-	my $self  =  shift      || {};
-	bless ($self,$class);
-	return $self;
+    my $class = shift;
+    $class = ref($class) || $class;
+    my $self = shift || {};
+    bless( $self, $class );
+    return $self;
 }
 
 #Support for:
 #start_time, start_str, finish_time, time_str, nmap_version, xml_version, scan_args
 sub AUTOLOAD {
-	(my $param = $AUTOLOAD) =~ s{.*::}{}xms;
-	return if($param eq 'DESTROY');
-	no strict 'refs';
-	*$AUTOLOAD = sub {return $_[0]->{lc $param}};	
-	goto &$AUTOLOAD;
+    ( my $param = $AUTOLOAD ) =~ s{.*::}{}xms;
+    return if ( $param eq 'DESTROY' );
+    no strict 'refs';
+    *$AUTOLOAD = sub { return $_[0]->{ lc $param } };
+    goto &$AUTOLOAD;
 }
-
 
 sub numservices {
-	my $self = shift;
-	my $type = shift || ''; #(syn|ack|bounce|connect|null|xmas|window|maimon|fin|udp|ipproto)
+    my $self = shift;
+    my $type = shift
+      || '';   #(syn|ack|bounce|connect|null|xmas|window|maimon|fin|udp|ipproto)
 
-	return unless(ref($self->{numservices}) eq 'HASH');
+    return unless ( ref( $self->{numservices} ) eq 'HASH' );
 
-	if($type ne ''){return $self->{numservices}{$type};}
-	else {
-		my $total = 0;
-		for (values %{$self->{numservices}}){$total +=$_;}
-		return $total;
-	}#(else) total number of services together
+    if ( $type ne '' ) { return $self->{numservices}{$type}; }
+    else {
+        my $total = 0;
+        for ( values %{ $self->{numservices} } ) { $total += $_; }
+        return $total;
+    }          #(else) total number of services together
 }
 
-
-sub scan_types 		{return sort {$a cmp $b} (keys %{$_[0]->{type}}) if(ref($_[0]->{type}) eq 'HASH');}
-sub scan_type_proto 	{return $_[1] ? $_[0]->{type}{$_[1]} : undef;}
-
-
+sub scan_types {
+    return sort { $a cmp $b } ( keys %{ $_[0]->{type} } )
+      if ( ref( $_[0]->{type} ) eq 'HASH' );
+}
+sub scan_type_proto { return $_[1] ? $_[0]->{type}{ $_[1] } : undef; }
 
 #/*****************************************************************************/
 # NMAP::PARSER::HOST
@@ -566,118 +564,122 @@ package Nmap::Parser::Host;
 use vars qw($AUTOLOAD);
 
 sub new {
-my $class = shift;
-$class    = ref($class) || $class;
-my $self  =  shift      || {};
-bless ($self,$class);
-return $self;
+    my $class = shift;
+    $class = ref($class) || $class;
+    my $self = shift || {};
+    bless( $self, $class );
+    return $self;
 }
 
-sub status {return $_[0]->{status};}
-sub addr {my $default =  $_[0]->{addrs}{ipv4} || $_[0]->{addrs}{ipv6}; return $default;}
+sub status { return $_[0]->{status}; }
+
+sub addr {
+    my $default = $_[0]->{addrs}{ipv4} || $_[0]->{addrs}{ipv6};
+    return $default;
+}
+
 sub addrtype {
-	if($_[0]->{addrs}{ipv4}){return 'ipv4';}
-	elsif($_[0]->{addrs}{ipv6}){return 'ipv6';}
-	}
+    if    ( $_[0]->{addrs}{ipv4} ) { return 'ipv4'; }
+    elsif ( $_[0]->{addrs}{ipv6} ) { return 'ipv6'; }
+}
 
-sub ipv4_addr {return $_[0]->{addrs}{ipv4};}
-sub ipv6_addr {return $_[0]->{addrs}{ipv6};}
+sub ipv4_addr { return $_[0]->{addrs}{ipv4}; }
+sub ipv6_addr { return $_[0]->{addrs}{ipv6}; }
 
-sub mac_addr {return $_[0]->{addrs}{mac}{addr};}
-sub mac_vendor {return $_[0]->{addrs}{mac}{vendor};}
+sub mac_addr   { return $_[0]->{addrs}{mac}{addr}; }
+sub mac_vendor { return $_[0]->{addrs}{mac}{vendor}; }
 
 #returns the first hostname
-sub hostname  {
-	my $self = shift;
-	my $index = shift || 0;
-	if(ref($self->{hostnames}) ne 'ARRAY'){return '';}
-	if(scalar @{ $self->{hostnames}} <= $index){
-	$index = scalar @{ $self->{hostnames}} -1;
-	}
-	return $self->{hostnames}[$index] if(scalar @{ $self->{hostnames} });
+sub hostname {
+    my $self = shift;
+    my $index = shift || 0;
+    if ( ref( $self->{hostnames} ) ne 'ARRAY' ) { return ''; }
+    if ( scalar @{ $self->{hostnames} } <= $index ) {
+        $index = scalar @{ $self->{hostnames} } - 1;
+    }
+    return $self->{hostnames}[$index] if ( scalar @{ $self->{hostnames} } );
 }
 
-sub all_hostnames {return @{$_[0]->{hostnames}};}
-sub extraports_state {return $_[0]->{ports}{extraports}{state};}
-sub extraports_count {return $_[0]->{ports}{extraports}{count};}
-sub distance {return $_[0]->{distance}; }
-
+sub all_hostnames    { return @{ $_[0]->{hostnames} }; }
+sub extraports_state { return $_[0]->{ports}{extraports}{state}; }
+sub extraports_count { return $_[0]->{ports}{extraports}{count}; }
+sub distance         { return $_[0]->{distance}; }
 
 sub _get_ports {
-	my $self = shift;
-	my $proto = pop; #param might be empty, so this goes first
-	my $state = lc(shift);    #open, filtered, closed or any combination
-	my @matched_ports = ();
-	
-	#if $state eq '', then tcp_ports or udp_ports was called for all ports
-	#therefore, only return the keys of all ports found
-	if($state eq ''){return sort {$a <=> $b} (keys %{ $self->{ports}{$proto} }) }
-	
-	#the port parameter can be set to either any of these also 'open|filtered'
-	#can count as 'open' and 'filetered'. Therefore I need to use a regex from now on
-	#if $param is empty, then all ports match.
+    my $self          = shift;
+    my $proto         = pop;          #param might be empty, so this goes first
+    my $state         = lc(shift);    #open, filtered, closed or any combination
+    my @matched_ports = ();
 
-	for my $portid (keys %{ $self->{ports}{$proto} }){
-			
-		#escape metacharacters ('|', for example in: open|filtered)
-		#using \Q and \E
-		push(@matched_ports, $portid)
-		if($self->{ports}{$proto}{$portid}{state} =~ /\Q$state\E/);
-		
-	}
-		
-	return sort {$a <=> $b} @matched_ports;
-	
+    #if $state eq '', then tcp_ports or udp_ports was called for all ports
+    #therefore, only return the keys of all ports found
+    if ( $state eq '' ) {
+        return sort { $a <=> $b } ( keys %{ $self->{ports}{$proto} } );
+    }
+
+#the port parameter can be set to either any of these also 'open|filtered'
+#can count as 'open' and 'filetered'. Therefore I need to use a regex from now on
+#if $param is empty, then all ports match.
+
+    for my $portid ( keys %{ $self->{ports}{$proto} } ) {
+
+        #escape metacharacters ('|', for example in: open|filtered)
+        #using \Q and \E
+        push( @matched_ports, $portid )
+          if ( $self->{ports}{$proto}{$portid}{state} =~ /\Q$state\E/ );
+
+    }
+
+    return sort { $a <=> $b } @matched_ports;
+
 }
 
 sub _get_port_state {
-	my $self = shift;
-	my $proto = pop; #portid might be empty, so this goes first
-	my $portid = lc(shift);    
-	
-	return undef unless(exists $self->{ports}{$proto}{$portid});
-	return $self->{ports}{$proto}{$portid}{state};
-	
-	}
+    my $self   = shift;
+    my $proto  = pop;         #portid might be empty, so this goes first
+    my $portid = lc(shift);
+
+    return undef unless ( exists $self->{ports}{$proto}{$portid} );
+    return $self->{ports}{$proto}{$portid}{state};
+
+}
 
 #changed this to use _get_ports since it was similar code
-sub tcp_ports { return _get_ports(@_,'tcp');}
-sub udp_ports { return _get_ports(@_,'udp');}
+sub tcp_ports { return _get_ports( @_, 'tcp' ); }
+sub udp_ports { return _get_ports( @_, 'udp' ); }
 
-sub tcp_port_count {return $_[0]->{ports}{tcp_port_count};}
-sub udp_port_count {return $_[0]->{ports}{udp_port_count};}
+sub tcp_port_count { return $_[0]->{ports}{tcp_port_count}; }
+sub udp_port_count { return $_[0]->{ports}{udp_port_count}; }
 
-sub tcp_port_state {return _get_port_state(@_,'tcp');}
-sub udp_port_state {return _get_port_state(@_,'udp');}
+sub tcp_port_state { return _get_port_state( @_, 'tcp' ); }
+sub udp_port_state { return _get_port_state( @_, 'udp' ); }
 
 sub tcp_service {
-	my $self = shift;
-	my $portid = shift;
-	if($portid eq ''){
-	warn "[Nmap-Parser] No port number passed to tcp_service()\n";	
-		return undef;}
-	return Nmap::Parser::Host::Service->new(
-			$self->{ports}{tcp}{$portid}{service}
-			);
-		 }
+    my $self   = shift;
+    my $portid = shift;
+    if ( $portid eq '' ) {
+        warn "[Nmap-Parser] No port number passed to tcp_service()\n";
+        return undef;
+    }
+    return Nmap::Parser::Host::Service->new(
+        $self->{ports}{tcp}{$portid}{service} );
+}
 
 sub udp_service {
-	my $self = shift;
-	my $portid = shift;
-	if($portid eq ''){
-	warn "[Nmap-Parser] No port number passed to udp_service()\n";	
-		return undef;}
-	return Nmap::Parser::Host::Service->new(
-			$self->{ports}{udp}{$portid}{service}
-			);
+    my $self   = shift;
+    my $portid = shift;
+    if ( $portid eq '' ) {
+        warn "[Nmap-Parser] No port number passed to udp_service()\n";
+        return undef;
+    }
+    return Nmap::Parser::Host::Service->new(
+        $self->{ports}{udp}{$portid}{service} );
 
-		 }
-
+}
 
 #usually the first one is the highest accuracy
 
-sub os_sig {return Nmap::Parser::Host::OS->new($_[0]->{os});}
-
+sub os_sig { return Nmap::Parser::Host::OS->new( $_[0]->{os} ); }
 
 #Support for:
 #tcpsequence_class, tcpsequence_values, tcpsequence_index,
@@ -686,25 +688,30 @@ sub os_sig {return Nmap::Parser::Host::OS->new($_[0]->{os});}
 #tcp_open_ports, udp_open_ports, tcp_filtered_ports, udp_filtered_ports,
 #tcp_closed_ports, udp_closed_ports
 sub AUTOLOAD {
-	(my $param = $AUTOLOAD) =~ s{.*::}{}xms;
-	return if($param eq 'DESTROY');
-	my($type,$val) = split /_/, lc($param);
-	#splits the given method name by '_'. This will determine the function and param
-	no strict 'refs';
-	
-	if( ($type eq 'tcp' || $type eq 'udp') && ($val eq 'open' || $val eq 'filtered' || $val eq 'closed') ){
-					
-		#they must be looking for port info: tcp or udp. The $val is either open|filtered|closed
-		*$AUTOLOAD = sub {return _get_ports($_[0], $val, $type);};	
-		goto &$AUTOLOAD;
-		
-	} elsif(defined $type && defined $val) {
-		#must be one of the 'sequence' functions asking for class/values/index
-		*$AUTOLOAD = sub {return $_[0]->{$type}{$val}};	
-		goto &$AUTOLOAD;
-	} else {die '[Nmap-Parser] method ->'.$param."() not defined!\n";}
-}
+    ( my $param = $AUTOLOAD ) =~ s{.*::}{}xms;
+    return if ( $param eq 'DESTROY' );
+    my ( $type, $val ) = split /_/, lc($param);
 
+#splits the given method name by '_'. This will determine the function and param
+    no strict 'refs';
+
+    if (   ( $type eq 'tcp' || $type eq 'udp' )
+        && ( $val eq 'open' || $val eq 'filtered' || $val eq 'closed' ) )
+    {
+
+#they must be looking for port info: tcp or udp. The $val is either open|filtered|closed
+        *$AUTOLOAD = sub { return _get_ports( $_[0], $val, $type ); };
+        goto &$AUTOLOAD;
+
+    }
+    elsif ( defined $type && defined $val ) {
+
+        #must be one of the 'sequence' functions asking for class/values/index
+        *$AUTOLOAD = sub { return $_[0]->{$type}{$val} };
+        goto &$AUTOLOAD;
+    }
+    else { die '[Nmap-Parser] method ->' . $param . "() not defined!\n"; }
+}
 
 #/*****************************************************************************/
 # NMAP::PARSER::HOST::SERVICE
@@ -714,13 +721,12 @@ package Nmap::Parser::Host::Service;
 use vars qw($AUTOLOAD);
 
 sub new {
-my $class = shift;
-$class    = ref($class) || $class;
-my $self  =  shift      || {};
-bless ($self,$class);
-return $self;
+    my $class = shift;
+    $class = ref($class) || $class;
+    my $self = shift || {};
+    bless( $self, $class );
+    return $self;
 }
-
 
 #Support for:
 #name port proto rpcnum owner version product extrainfo tunnel method confidence
@@ -728,74 +734,77 @@ return $self;
 #on delay (increase speed) and memory
 
 sub AUTOLOAD {
-	(my $param = $AUTOLOAD) =~ s{.*::}{}xms;
-	return if($param eq 'DESTROY');
-	no strict 'refs';
-	
-	*$AUTOLOAD = sub {return $_[0]->{lc $param}};	
-	goto &$AUTOLOAD;
-}
+    ( my $param = $AUTOLOAD ) =~ s{.*::}{}xms;
+    return if ( $param eq 'DESTROY' );
+    no strict 'refs';
 
+    *$AUTOLOAD = sub { return $_[0]->{ lc $param } };
+    goto &$AUTOLOAD;
+}
 
 #/*****************************************************************************/
 # NMAP::PARSER::HOST::OS
 #/*****************************************************************************/
 
-
 package Nmap::Parser::Host::OS;
 use vars qw($AUTOLOAD);
 
 sub new {
-my $class = shift;
-$class    = ref($class) || $class;
-my $self  =  shift      || {};
-bless ($self,$class);
-return $self;
+    my $class = shift;
+    $class = ref($class) || $class;
+    my $self = shift || {};
+    bless( $self, $class );
+    return $self;
 }
 
-sub portused_open   {return $_[0]->{portused}{open};} 
-sub portused_closed {return $_[0]->{portused}{closed};}
-sub os_fingerprint  {return $_[0]->{os_fingerprint};}
+sub portused_open   { return $_[0]->{portused}{open}; }
+sub portused_closed { return $_[0]->{portused}{closed}; }
+sub os_fingerprint  { return $_[0]->{os_fingerprint}; }
 
-sub name_count {return $_[0]->{osmatch_count};}
+sub name_count { return $_[0]->{osmatch_count}; }
 
 sub all_names {
     my $self = shift;
-    @_=();
-    if($self->{osclass_count} < 1){return @_;}
-    if(ref($self->{osmatch_name}) eq 'ARRAY'){
-    return sort @{$self->{osmatch_name}};}
+    @_ = ();
+    if ( $self->{osclass_count} < 1 ) { return @_; }
+    if ( ref( $self->{osmatch_name} ) eq 'ARRAY' ) {
+        return sort @{ $self->{osmatch_name} };
+    }
 
-} #given by decreasing accuracy
+}    #given by decreasing accuracy
 
-sub class_count {return $_[0]->{osclass_count};}
+sub class_count { return $_[0]->{osclass_count}; }
 
 #Support for:
 #name,names, name_accuracy, osfamily, vendor, type, osgen, class_accuracy
 sub AUTOLOAD {
-	(my $param = $AUTOLOAD) =~ s{.*::}{}xms;
-	return if($param eq 'DESTROY');
-	no strict 'refs';
-	$param = lc($param);
-	
-	$param = 'name' if($param eq 'names');
-	if($param eq 'name' || $param eq 'name_accuracy'){
-		
-		*$AUTOLOAD = sub {_get_info($_[0],$_[1],$param,'osmatch');};		
-		goto &$AUTOLOAD;
-	} else {
+    ( my $param = $AUTOLOAD ) =~ s{.*::}{}xms;
+    return if ( $param eq 'DESTROY' );
+    no strict 'refs';
+    $param = lc($param);
 
-		*$AUTOLOAD = sub {_get_info($_[0],$_[1],$param,'osclass');};	
-		goto &$AUTOLOAD;
-	}
+    $param = 'name' if ( $param eq 'names' );
+    if ( $param eq 'name' || $param eq 'name_accuracy' ) {
+
+        *$AUTOLOAD = sub { _get_info( $_[0], $_[1], $param, 'osmatch' ); };
+        goto &$AUTOLOAD;
+    }
+    else {
+
+        *$AUTOLOAD = sub { _get_info( $_[0], $_[1], $param, 'osclass' ); };
+        goto &$AUTOLOAD;
+    }
 }
 
 sub _get_info {
-	my($self,$index,$param,$type) = @_;
-	$index ||= 0;
-	#type is either osclass or osmatch
-	if($index >= $self->{$type.'_count'}){$index = $self->{$type.'_count'}-1;}
-	return $self->{$type.'_'.$param}[$index];		
+    my ( $self, $index, $param, $type ) = @_;
+    $index ||= 0;
+
+    #type is either osclass or osmatch
+    if ( $index >= $self->{ $type . '_count' } ) {
+        $index = $self->{ $type . '_count' } - 1;
+    }
+    return $self->{ $type . '_' . $param }[$index];
 }
 
 1;
