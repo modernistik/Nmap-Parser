@@ -104,15 +104,35 @@ sub parsescan {
 "[Nmap-Parser] Cannot pass option '-oX', '-oN' or '-oG' to parsecan()";
     }
 
-    my $cmd = "$nmap $args -v -v -v -oX - " . ( join ' ', @ips );
-    open $FH, "$cmd |" || die "[Nmap-Parser] Could not perform nmap scan - $!";
+    my $cmd;
     $self->_init();
-    $self->parse($FH);
-    close $FH;
+
+#if output file is defined, point it to a localfile then call parsefile instead.
+    if ( defined( $self->{cache_file} ) ) {
+        $cmd =
+            "$nmap $args -v -v -v -oX "
+          . $self->{cache_file} . " "
+          . ( join ' ', @ips );
+        `$cmd`;    #remove output from STDOUT
+        $self->parsefile( $self->{cache_file} );
+    }
+    else {
+        $cmd = "$nmap $args -v -v -v -oX - " . ( join ' ', @ips );
+        open $FH,
+          "$cmd |" || die "[Nmap-Parser] Could not perform nmap scan - $!";
+        $self->parse($FH);
+        close $FH;
+    }
+
     $self->_clean();
     $self->purge;
     return $self;
 
+}
+
+sub cache_scan {
+    my $self = shift;
+    $self->{cache_file} = shift || 'nmap-parser-cache.' . time() . '.xml';
 }
 
 sub purge {
@@ -914,20 +934,39 @@ xml information is compliant. The file is closed no matter how C<parsefile()> re
 
 =item B<parsescan($nmap,$args,@ips)>
 
-This method runs an nmap scan where $nmap is the path to the nmap executable,
+This method runs an nmap scan where $nmap is the path to the nmap executable or binary,
 $args are the nmap command line parameters, and @ips are the list of IP addresses
 to scan. parsescan() will automagically run the nmap scan and parse the information.
+
+If you wish to save the xml output from parsescan(), you must call cache_scan() method B<BEFORE>
+you start the parsescan() process. This is done to conserve memory while parsing. cache_scan() will
+let Nmap::Parser know to save the output before parsing the xml since Nmap::Parser purges everything that has
+been parsed by the script to conserve memory and increase speed.
+
 I<See section EXAMPLES for a short tutorial>
 
 I<Note: You cannot have one of the nmap options to be '-oX', '-oN' or '-oG'. Your
 program will die if you try and pass any of these options because it decides the
 type of output nmap will generate. The IP addresses can be nmap-formatted
-addresses (see nmap(1)>
+addresses see nmap(1)>
 
 If you get an error or your program dies due to parsing, please check that the
 xml information is compliant. If you are using parsescan() or an open filehandle
 , make sure that the nmap scan that you are performing is successful in returning
 xml information. (Sometimes using loopback addresses causes nmap to fail).
+
+=item B<cache_scan($filename)>
+
+This function allows you to save the output of a parsescan() (or nmap scan) to the disk. $filename
+is the name of the file you wish to save the nmap scan information to. It defaults to nmap-parser-cache.xml
+It returns the name of the file to be used as the cache.
+
+ #Must be called before parsescan().
+ $np->cache_scan($filename); #output set to nmap-parser-cache.xml
+
+ #.. do other stuff to prepare for parsescan(), ex. setup callbacks
+
+ $np->parsescan('/usr/bin/nmap',$args,@IPS);
 
 =item B<purge()>
 
@@ -1474,14 +1513,14 @@ If you have questions about how to use the module, or any of its features, you
 can post messages to the Nmap::Parser module forum on CPAN::Forum.
 L<http://www.cpanforum.com/dist/Nmap-Parser>
 
-=head2 Bug Reports
+=head2 Bug Reports and Enhancements
 
-Please submit any bugs to:
+Please submit any bugs or feature requests to:
 L<http://code.google.com/p/nmap-parser/issues/list>
 
 B<Please make sure that you submit the xml-output file of the scan which you are having
-trouble.> This can be done by running your scan with the I<-oX filename.xml> nmap switch.
-Please remove any important IP addresses for security reasons.
+trouble with.> This can be done by running your scan with the I<-oX filename.xml> nmap switch.
+Please remove any important IP addresses for security reasons. It saves time in reproducing issues.
 
 =head1 SEE ALSO
 
@@ -1493,11 +1532,11 @@ homepage can be found at: L<http://www.insecure.org/nmap/>.
 
 =head1 AUTHOR
 
-Anthony G Persaud
+Anthony G Persaud L<http://www.anthonypersaud.com>
 
 =head1 COPYRIGHT
 
-Copyright (c) <2007> <Anthony G. Persaud>
+Copyright (c) <2003-2008> <Anthony G. Persaud>
 
 MIT License
 

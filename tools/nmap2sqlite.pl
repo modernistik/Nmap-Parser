@@ -39,33 +39,34 @@ use Pod::Usage;
 use Getopt::Long;
 Getopt::Long::Configure('bundling');
 
-
 GetOptions(
-		'help|h|?'		=> \$G{helpme},
-                'nmap=s'                => \$G{nmap},
-                'xml'			=> \$G{file},
-                'scan'			=> \$G{scan},
-		'db=s'			=> \$G{DBNAME},
-		'table=s'		=> \$G{TABLE}
-) or (pod2usage(-exitstatus => 0, -verbose => 2));
-unless($G{file} || $G{scan}){pod2usage(-exitstatus => 0, -verbose => 2);}
+    'help|h|?' => \$G{helpme},
+    'nmap=s'   => \$G{nmap},
+    'xml'      => \$G{file},
+    'scan'     => \$G{scan},
+    'db=s'     => \$G{DBNAME},
+    'table=s'  => \$G{TABLE}
+) or ( pod2usage( -exitstatus => 0, -verbose => 2 ) );
+unless ( $G{file} || $G{scan} ) {
+    pod2usage( -exitstatus => 0, -verbose => 2 );
+}
 
 print "\nnmap2sqlite.pl - ( http://nmapparser.wordpress.com )\n",
-	('-'x50),"\n\n";
-	
-if($G{scan} && $G{nmap} eq ''){
-	$G{nmap} = find_exe();	
+  ( '-' x 50 ), "\n\n";
+
+if ( $G{scan} && $G{nmap} eq '' ) {
+    $G{nmap} = find_exe();
 }
 
 $G{DBNAME} ||= 'ip.db';
-$G{TABLE} ||= 'hosts';
+$G{TABLE}  ||= 'hosts';
 
 print "Using DATABASE: $G{DBNAME}\n";
 print "Using TABLE   : $G{TABLE}\n";
-print "Using NMAP_EXE: $G{nmap}\n" if($G{scan});
+print "Using NMAP_EXE: $G{nmap}\n" if ( $G{scan} );
 
 #Schema for table, simple for now
-$S{CREATE_TABLE} = qq{  CREATE TABLE }.$G{TABLE}.qq{ (
+$S{CREATE_TABLE} = qq{  CREATE TABLE } . $G{TABLE} . qq{ (
   ip             VARCHAR(15) PRIMARY KEY NOT NULL,
   mac             VARCHAR(17),
   status          VARCHAR(7) DEFAULT 'down',
@@ -79,105 +80,102 @@ $S{CREATE_TABLE} = qq{  CREATE TABLE }.$G{TABLE}.qq{ (
   UNIQUE (ip))
   };
 
-$S{INSERT_HOST} = qq{INSERT OR REPLACE INTO }.$G{TABLE}.
-                  qq{ (ip, mac, status, hostname, open_ports, filtered_ports, osname, osfamily, osgen) VALUES (?,?,?,?,?,?,?,?,?)};
-
-
+$S{INSERT_HOST} =
+    qq{INSERT OR REPLACE INTO }
+  . $G{TABLE}
+  . qq{ (ip, mac, status, hostname, open_ports, filtered_ports, osname, osfamily, osgen) VALUES (?,?,?,?,?,?,?,?,?)};
 
 my $np = new Nmap::Parser;
 
-$np->callback(\&insert_host);
+$np->callback( \&insert_host );
 
-  #not implemented in this script, will finish later... ;-)
+#not implemented in this script, will finish later... ;-)
 #$np->parsescan($PATH_TO_NMAP, $NMAP_ARGS, @IPS);
 
 #SQLite is used for simplicity.
-my $dsn = 'DBI:SQLite:'.$G{DBNAME};
-my $dbh = DBI->connect($dsn) or die "Could not connect to $G{DBNAME}: ".DBI->errstr;
+my $dsn = 'DBI:SQLite:' . $G{DBNAME};
+my $dbh = DBI->connect($dsn)
+  or die "Could not connect to $G{DBNAME}: " . DBI->errstr;
 
 #Check if tables exists...
-my @tables_exists = $dbh->tables(undef, undef, $G{TABLE} , undef);
+my @tables_exists = $dbh->tables( undef, undef, $G{TABLE}, undef );
 
 #if it doesn't - create it
-if(scalar @tables_exists == 0)
-{ print "\nGenerating table: $G{TABLE} ...\n";
-  $dbh->do($S{CREATE_TABLE});
+if ( scalar @tables_exists == 0 ) {
+    print "\nGenerating table: $G{TABLE} ...\n";
+    $dbh->do( $S{CREATE_TABLE} );
 }
 
 #do stuff
-my $sth_ins = $dbh->prepare_cached($S{INSERT_HOST});
+my $sth_ins = $dbh->prepare_cached( $S{INSERT_HOST} );
 
 #for every host scanned, insert or updated it in the table
-if($G{file}){
-	for my $file (@ARGV){
-	print "\nProcessing file $file...\n";
-	$np->parsefile($file);
-	}
-} elsif($G{scan} && $G{nmap}){
-	print "\nProcessing scan: ".$G{nmap}.' -sT -O -F '.join(' ',@ARGV);
-	$np->parsescan($G{nmap},'-sT -O -F',@ARGV);
+if ( $G{file} ) {
+    for my $file (@ARGV) {
+        print "\nProcessing file $file...\n";
+        $np->parsefile($file);
+    }
 }
-
+elsif ( $G{scan} && $G{nmap} ) {
+    print "\nProcessing scan: " . $G{nmap} . ' -sT -O -F ' . join( ' ', @ARGV );
+    $np->parsescan( $G{nmap}, '-sT -O -F', @ARGV );
+}
 
 #Booyah!
 $sth_ins->finish;
 $dbh->disconnect();
-
 
 #This function will insert the host, or update it if it already exists
 #Of course, we can always check the last_scanned entry in the database to
 #make sure the latest information is there, but this is just beta version.
 sub insert_host {
     my $host = shift;
-    my $os = $host->os_sig();
-    
+    my $os   = $host->os_sig();
 
     #ip, mac, status, hostname, open_ports, filtered_ports, os_family, os_gen
     my @input_values = (
-    $host->addr,
-    $host->mac_addr || undef,
-    $host->status || undef,
-    $host->hostname || undef,
-    join(',',$host->tcp_open_ports) || undef,
-    join(',',$host->tcp_filtered_ports) || undef,
-    $os->name || undef,
-    $os->osfamily || undef,
-    $os->osgen || undef
+        $host->addr,
+        $host->mac_addr || undef,
+        $host->status   || undef,
+        $host->hostname || undef,
+        join( ',', $host->tcp_open_ports )     || undef,
+        join( ',', $host->tcp_filtered_ports ) || undef,
+        $os->name     || undef,
+        $os->osfamily || undef,
+        $os->osgen    || undef
     );
 
-    my $rv = $sth_ins->execute(@input_values) ? "ok" : "OOPS! - ".DBI->errstr;
-    
-    printf("\t..> %-15s : (%4s) : %-s\n",$host->addr,$host->status ,$rv);
+    my $rv = $sth_ins->execute(@input_values) ? "ok" : "OOPS! - " . DBI->errstr;
+
+    printf( "\t..> %-15s : (%4s) : %-s\n", $host->addr, $host->status, $rv );
 
 }
 
-
 sub find_exe {
-
 
     my $exe_to_find = 'nmap';
     $exe_to_find =~ s/\.exe//;
-    local($_);
-    local(*DIR);
+    local ($_);
+    local (*DIR);
 
-    for my $dir (File::Spec->path()) {
-        opendir(DIR,$dir) || next;
-        my @files = (readdir(DIR));
+    for my $dir ( File::Spec->path() ) {
+        opendir( DIR, $dir ) || next;
+        my @files = ( readdir(DIR) );
         closedir(DIR);
 
         my $path;
         for my $file (@files) {
             $file =~ s/\.exe$//;
-            next unless($file eq $exe_to_find);
+            next unless ( $file eq $exe_to_find );
 
-            $path = File::Spec->catfile($dir,$file);
-            next unless -r $path && (-x _ || -l _);
+            $path = File::Spec->catfile( $dir, $file );
+            next unless -r $path && ( -x _ || -l _ );
 
             return $path;
             last DIR;
         }
     }
-    
+
     warn "[Nmap2SQLite] No nmap in your PATH: use '--nmap nmap_path' option\n";
     exit;
 
@@ -294,7 +292,7 @@ L<http://www.cpanforum.com/dist/Nmap-Parser>
 =head2 Bug Reports
 
 Please submit any bugs to:
-L<http://sourceforge.net/tracker/?group_id=97509&atid=618345>
+L<http://code.google.com/p/nmap-parser/issues/list>
 
 B<Please make sure that you submit the xml-output file of the scan which you are having
 trouble.> This can be done by running your scan with the I<-oX filename.xml> nmap switch.
@@ -303,7 +301,7 @@ Please remove any important IP addresses for security reasons.
 =head2 Feature Requests
 
 Please submit any requests to:
-L<http://sourceforge.net/tracker/?atid=618348&group_id=97509&func=browse>
+L<http://code.google.com/p/nmap-parser/issues/list>
 
 
 =head1 SEE ALSO
@@ -316,7 +314,7 @@ homepage can be found at: L<http://www.insecure.org/nmap/>.
 
 =head1 AUTHOR
 
-Anthony G Persaud <ironstar@iastate.edu> L<http://www.anthonypersaud.com>
+Anthony G Persaud <apersaud[at]gmail.com> L<http://www.anthonypersaud.com>
 
 =head1 COPYRIGHT
 

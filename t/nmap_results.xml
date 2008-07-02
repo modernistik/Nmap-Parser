@@ -1,141 +1,184 @@
-<?xml version="1.0" ?>
-    <!-- nmap 3.27 scan initiated Tue Jul  1 14:48:03 2003 as: nmap -v -v -v -oX test.xml -O -sTUR -p 1-1023 localhost -->
-    <nmaprun scanner="nmap" args="nmap -v -v -v -oX test.xml -O -sTUR -p 1-1023 127.0.0.[1-4]" start="1057088883" startstr="Tue Jul  1 14:48:03 2003" version="3.80" xmloutputversion="1.01">
-      <scaninfo type="connect" protocol="tcp" numservices="1023" services="1-1023" />
-      <scaninfo type="udp" protocol="udp" numservices="1023" services="1-1023" />
-      <verbose level="3" />
-      <debugging level="0" />
-      <!-- this is available in 4.20+ -->
-      <taskbegin task="ARP Ping Scan" time="1181604143" />
-        <taskend task="ARP Ping Scan" time="1181604144" />
-        <taskbegin task="Parallel DNS resolution of 4 hosts." time="1181604144" />
-        <taskend task="Parallel DNS resolution of 4 hosts." time="1181604144" />
-        <taskbegin task="UDP Scan" time="1181604144" />
-        <taskprogress task="UDP Scan" time="1181604174" percent="29.42" remaining="71" etc="1181604246" />
-        <taskprogress task="UDP Scan" time="1181604246" percent="41.05" remaining="147" etc="1181604394" />
-        <taskprogress task="UDP Scan" time="1181604278" percent="43.24" remaining="176" etc="1181604454" />
-        <taskprogress task="UDP Scan" time="1181604279" percent="43.31" remaining="176" etc="1181604456" />
-        <taskprogress task="UDP Scan" time="1181604284" percent="43.64" remaining="180" etc="1181604465" />
-        <taskprogress task="UDP Scan" time="1181604467" percent="55.62" remaining="258" etc="1181604725" />
-        <taskprogress task="UDP Scan" time="1181604728" percent="73.37" remaining="212" etc="1181604941" />
-        <taskprogress task="UDP Scan" time="1181604943" percent="87.68" remaining="112" etc="1181605056" />
-        <taskprogress task="UDP Scan" time="1181605058" percent="95.54" remaining="42" etc="1181605101" />
-        <taskend task="UDP Scan" time="1181605166" />
-        <taskbegin task="Connect() Scan" time="1181605166" />
-        <taskprogress task="Connect() Scan" time="1181605197" percent="3.06" remaining="961" etc="1181606159" />
-        <taskprogress task="Connect() Scan" time="1181606160" percent="78.53" remaining="271" etc="1181606432" />
-        <taskprogress task="Connect() Scan" time="1181606432" percent="95.90" remaining="54" etc="1181606486" />
-        <taskend task="Connect() Scan" time="1181606575" />
-        <taskbegin task="RPCGrind Scan against spidey" time="1181606634" />
-        <taskend task="RPCGrind Scan against spidey" time="1181606638" />
-      <host>
-        <status state="up" />
-        <address addr="127.0.0.1" addrtype="ipv4" />
-        <address addr="00:09:5B:3F:7D:5E" vendor="Netgear" addrtype="mac" />
-        <hostnames>
-          <hostname name="host1" type="PTR" />
-          <hostname name="host1_2" type="PTR" />
-        </hostnames>
-        <ports>
-          <extraports state="closed" count="2038" />
-          <port protocol="tcp" portid="22"><state state="filtered" /><service name="ssh" method="table" conf="3" /></port>
-          <port protocol="tcp" portid="25"><state state="filtered" /><service name="smtp" method="table" conf="3" /></port>
-          <port protocol="tcp" portid="80"><state state="open" /><service name="http" method="table" conf="3"  /></port>
-          <port protocol="tcp" portid="111"><state state="open" /><service name="rpcbind" proto="rpc" rpcnum="100000" lowver="2" highver="2" method="detection" conf="5" /></port>
-          <port protocol="tcp" portid="443"><state state="open" /><service name="https" method="table" conf="3"  /></port>
-          <port protocol="tcp" portid="631"><state state="open" /><service name="ipp" method="table" conf="3"  /></port>
-          <port protocol="tcp" portid="555"><state state="open|filtered" /></port>
-          <port protocol="tcp" portid="4903"><state state="closed" /></port>
-          <port protocol="udp" portid="937"><state state="filtered" /></port>
-          <port protocol="udp" portid="111"><state state="open" /><service name="rpcbind" proto="rpc" rpcnum="100000" lowver="2" highver="2" method="detection" conf="5" /></port>
-        </ports>
-        <os>
-          <portused state="open" proto="tcp" portid="22" />
-          <portused state="closed" proto="tcp" portid="1" />
-          <osclass type="general purpose" vendor='Linux' osfamily='Linux' osgen='2.4.x' accuracy="100"/>
-          <osmatch name="Linux Kernel 2.4.0 - 2.5.20" accuracy="100" />
-          <osfingerprint fingerprint="
-SEQ(SP=C5%GCD=1%ISR=C7%TI=Z%II=I%TS=8)
-ECN(R=Y%DF=Y%T=40%W=16D0%O=M5B4NNSNW2%CC=N%Q=)
-T1(R=Y%DF=Y%T=40%S=O%A=S+%F=AS%RD=0%Q=)
-T2(R=N)
-T3(R=Y%DF=Y%T=40%W=16A0%S=O%A=S+%F=AS%O=M5B4ST11NW2%RD=0%Q=)
-T4(R=Y%DF=Y%T=40%W=0%S=A%A=Z%F=R%O=%RD=0%Q=)
-T7(R=Y%DF=Y%T=40%W=0%S=Z%A=S+%F=AR%O=%RD=0%Q=)
-U1(R=Y%DF=N%T=40%TOS=C0%IPL=164%UN=0%RIPL=G%RID=G%RIPCK=G%RUCK=G%RUL=G%RUD=G)
-IE(R=Y%DFI=N%T=40%TOSI=S%CD=S%SI=S%DLI=S)
-" />
-        </os>
-        <uptime seconds="1973" lastboot='Tue Jul  1 14:15:27 2003' />
-        <tcpsequence index="4336320" class="random positive increments" difficulty="Good luck!" values="B742FEAF,B673A3F0,B6B42D41,B6C710A1,B6F23FC4,B72FA3A8" />
-        <ipidsequence class="All zeros" values="0,0,0,0,0,0"/>
-        <tcptssequence class="100HZ" values="30299,302A5,302B1,302BD,302C9,302D5"/>
-        <distance value="1" />
-      </host>
-      <host>
-        <status state="down" />
-        <address addr="127.0.0.2" addrtype="ipv4" />
-      </host>
-      <host>
-        <status state="up" />
-        <address addr="127.0.0.3" addrtype="ipv4" />
-        <hostnames>
-          <hostname name="host_3" type="PTR" />
-        </hostnames>
-        <ports>
-          <extraports state="filtered" count="1644" />
-          <port protocol="tcp" portid="112"><state state="open" /><service name="rpcbind" version="2" method="probed" conf="10" /></port>
-          <port protocol="tcp" portid="113"><state state="open" /><owner name="identd" /><service name="ident" product="OpenBSD identd" method="probed" conf="10" /></port>
-          <port protocol="tcp" portid="21"><state state="open" /><owner name="root" /><service name="ftp" product="ProFTPD" version="1.2.5rc1" method="probed" conf="10" /></port>
-          <port protocol="tcp" portid="22"><state state="open" /><owner name="root" /><service name="ssh" product="OpenSSH" version="3.4p1" extrainfo="protocol 1.99" method="probed" conf="10" /></port>
-          <port protocol="tcp" portid="25"><state state="open" /><owner name="root" /><service name="smtp" product="Exim smtpd" version="3.35" method="probed" conf="10" /></port>
-          <port protocol="tcp" portid="26"><state state="open" /><service name="ssh" product="OpenSSH" version="3.6.1p1" extrainfo="protocol 1.99" method="probed" conf="10" /></port>
-          <port protocol="udp" portid="80"><state state="open" /><owner name="www-data" /><service name="http" product="Apache httpd" version="1.3.26" extrainfo="(Unix) Debian GNU/Linux" method="probed" conf="10" /></port>
-          <port protocol="tcp" portid="953"><state state="open" /><service name="rndc" method="table" conf="3" /></port>
-        </ports>
-      </host>
-      <host>
-        <status state="up" />
-        <address addr="127.0.0.4" addrtype="ipv4" />
-        <hostnames>
-          <hostname name="host_4" type="PTR" />
-        </hostnames>
-        <ports>
-          <extraports state="closed" count="1640" />
-          <port protocol="tcp" portid="111"><state state="open" /><service name="rpcbind" version="2" extrainfo="rpc #100000" method="probed" conf="10" /></port>
-        </ports>
-        <os>
-            <portused state="open" proto="tcp" portid="22" />
-          <portused state="closed" proto="tcp" portid="1" />
-            <osmatch name="Linux Kernel 2.4.0 - 2.5.20" accuracy="100" />
-            <osmatch name="Solaris 9" accuracy="99" />
-          <osclass type="router" vendor="Redback" osfamily="AOS" accuracy="97"/>
-          <osclass type="broadband router" vendor="Thomson" osfamily="embedded" accuracy="97"/>
-          <osclass type="switch" vendor="Fore" osfamily="embedded" accuracy="92"/>
-          <osclass type="printer" vendor="Xerox" osfamily="embedded" accuracy="91"/>
-          <osclass type="broadband router" vendor="Redback" osfamily="embedded" accuracy="90"/>
-          <osclass type="firewall" vendor="SonicWall" osfamily="embedded" accuracy="90"/>
-          <osclass type="switch" vendor="Enterasys" osfamily="embedded" accuracy="90"/>
-          <osclass type="WAP" vendor="Cisco" osfamily="embedded" accuracy="90"/>
-          <osclass type="broadband router" vendor="Alcatel" osfamily="embedded" accuracy="90"/>
-          <osclass type="general purpose" vendor="Sun" osfamily="SunOS" accuracy="90"/>
-          <osclass type="general purpose" vendor='Linux' osfamily='Linux' osgen='2.4.x' accuracy="50"/>
-          <osfingerprint fingerprint="
-SCAN(V=4.20%D=6/11%OT=22%CT=%CU=%PV=N%DS=1%G=N%M=001321%TM=466DE2F1%P=i686-pc-windows-windows)
-T5(Resp=Y%DF=Y%W=0%ACK=S++%Flags=AR%Ops=)
-T6(Resp=Y%DF=Y%W=0%ACK=O%Flags=R%Ops=)
-T7(Resp=Y%DF=Y%W=0%ACK=S++%Flags=AR%Ops=)
-PU(Resp=Y%DF=N%TOS=C0%IPLEN=164%RIPTL=148%RID=E%RIPCK=E%UCK=E%ULEN=134%DAT=E)
-" />
-        </os>
-        <tcpsequence index="19825" class="random positive increments" difficulty="Worthy challenge" values="E4C680EA,E4C8D295,E4CB1032,E4CD94FF,E4CF761A,E4D240A2" />
-        <ipidsequence class="Incremental" values="C4BE,C4C6,C4CC,C4CE,C4D4,C4DC"/>
-        <tcptssequence class="none returned (unsupported)"/>
-        <distance value="10" />
-      </host>
-      <runstats>
-        <finished time="1057088900" timestr="Tue Jul  1 14:48:20 2003" />
-        <hosts up="1" down="0" total="1" />
-        <!-- Nmap run completed at Tue Jul  1 14:48:20 2003; 1 IP address (1 host up) scanned in 16.970 seconds -->
-      </runstats>
-    </nmaprun>
+<?xml version="1.0"?>
+<!-- nmap 3.27 scan initiated Tue Jul  1 14:48:03 2003 as: nmap -v -v -v -oX test.xml -O -sTUR -p 1-1023 localhost -->
+<nmaprun scanner="nmap" args="nmap -v -v -v -oX test.xml -O -sTUR -p 1-1023 127.0.0.[1-4]" start="1057088883" startstr="Tue Jul  1 14:48:03 2003" version="3.80" xmloutputversion="1.01">
+	<scaninfo type="connect" protocol="tcp" numservices="1023" services="1-1023"/>
+	<scaninfo type="udp" protocol="udp" numservices="1023" services="1-1023"/>
+	<verbose level="3"/>
+	<debugging level="0"/>
+<!-- this is available in 4.20+ -->
+	<taskbegin task="ARP Ping Scan" time="1181604143"/>
+	<taskend task="ARP Ping Scan" time="1181604144"/>
+	<taskbegin task="Parallel DNS resolution of 4 hosts." time="1181604144"/>
+	<taskend task="Parallel DNS resolution of 4 hosts." time="1181604144"/>
+	<taskbegin task="UDP Scan" time="1181604144"/>
+	<taskprogress task="UDP Scan" time="1181604174" percent="29.42" remaining="71" etc="1181604246"/>
+	<taskprogress task="UDP Scan" time="1181604246" percent="41.05" remaining="147" etc="1181604394"/>
+	<taskprogress task="UDP Scan" time="1181604278" percent="43.24" remaining="176" etc="1181604454"/>
+	<taskprogress task="UDP Scan" time="1181604279" percent="43.31" remaining="176" etc="1181604456"/>
+	<taskprogress task="UDP Scan" time="1181604284" percent="43.64" remaining="180" etc="1181604465"/>
+	<taskprogress task="UDP Scan" time="1181604467" percent="55.62" remaining="258" etc="1181604725"/>
+	<taskprogress task="UDP Scan" time="1181604728" percent="73.37" remaining="212" etc="1181604941"/>
+	<taskprogress task="UDP Scan" time="1181604943" percent="87.68" remaining="112" etc="1181605056"/>
+	<taskprogress task="UDP Scan" time="1181605058" percent="95.54" remaining="42" etc="1181605101"/>
+	<taskend task="UDP Scan" time="1181605166"/>
+	<taskbegin task="Connect() Scan" time="1181605166"/>
+	<taskprogress task="Connect() Scan" time="1181605197" percent="3.06" remaining="961" etc="1181606159"/>
+	<taskprogress task="Connect() Scan" time="1181606160" percent="78.53" remaining="271" etc="1181606432"/>
+	<taskprogress task="Connect() Scan" time="1181606432" percent="95.90" remaining="54" etc="1181606486"/>
+	<taskend task="Connect() Scan" time="1181606575"/>
+	<taskbegin task="RPCGrind Scan against spidey" time="1181606634"/>
+	<taskend task="RPCGrind Scan against spidey" time="1181606638"/>
+	<host>
+		<status state="up"/>
+		<address addr="127.0.0.1" addrtype="ipv4"/>
+		<address addr="00:09:5B:3F:7D:5E" vendor="Netgear" addrtype="mac"/>
+		<hostnames>
+			<hostname name="host1" type="PTR"/>
+			<hostname name="host1_2" type="PTR"/>
+		</hostnames>
+		<ports>
+			<extraports state="closed" count="2038"/>
+			<port protocol="tcp" portid="22">
+				<state state="filtered"/>
+				<service name="ssh" method="table" conf="3"/>
+			</port>
+			<port protocol="tcp" portid="25">
+				<state state="filtered"/>
+				<service name="smtp" method="table" conf="3"/>
+			</port>
+			<port protocol="tcp" portid="80">
+				<state state="open"/>
+				<service name="http" method="table" conf="3"/>
+			</port>
+			<port protocol="tcp" portid="111">
+				<state state="open"/>
+				<service name="rpcbind" proto="rpc" rpcnum="100000" lowver="2" highver="2" method="detection" conf="5"/>
+			</port>
+			<port protocol="tcp" portid="443">
+				<state state="open"/>
+				<service name="https" method="table" conf="3"/>
+			</port>
+			<port protocol="tcp" portid="631">
+				<state state="open"/>
+				<service name="ipp" method="table" conf="3"/>
+			</port>
+			<port protocol="tcp" portid="555">
+				<state state="open|filtered"/>
+			</port>
+			<port protocol="tcp" portid="4903">
+				<state state="closed"/>
+			</port>
+			<port protocol="udp" portid="937">
+				<state state="filtered"/>
+			</port>
+			<port protocol="udp" portid="111">
+				<state state="open"/>
+				<service name="rpcbind" proto="rpc" rpcnum="100000" lowver="2" highver="2" method="detection" conf="5"/>
+			</port>
+		</ports>
+		<os>
+			<portused state="open" proto="tcp" portid="22"/>
+			<portused state="closed" proto="tcp" portid="1"/>
+			<osclass type="general purpose" vendor="Linux" osfamily="Linux" osgen="2.4.x" accuracy="100"/>
+			<osmatch name="Linux Kernel 2.4.0 - 2.5.20" accuracy="100"/>
+			<osfingerprint fingerprint=" SEQ(SP=C5%GCD=1%ISR=C7%TI=Z%II=I%TS=8) ECN(R=Y%DF=Y%T=40%W=16D0%O=M5B4NNSNW2%CC=N%Q=) T1(R=Y%DF=Y%T=40%S=O%A=S+%F=AS%RD=0%Q=) T2(R=N) T3(R=Y%DF=Y%T=40%W=16A0%S=O%A=S+%F=AS%O=M5B4ST11NW2%RD=0%Q=) T4(R=Y%DF=Y%T=40%W=0%S=A%A=Z%F=R%O=%RD=0%Q=) T7(R=Y%DF=Y%T=40%W=0%S=Z%A=S+%F=AR%O=%RD=0%Q=) U1(R=Y%DF=N%T=40%TOS=C0%IPL=164%UN=0%RIPL=G%RID=G%RIPCK=G%RUCK=G%RUL=G%RUD=G) IE(R=Y%DFI=N%T=40%TOSI=S%CD=S%SI=S%DLI=S) "/>
+		</os>
+		<uptime seconds="1973" lastboot="Tue Jul  1 14:15:27 2003"/>
+		<tcpsequence index="4336320" class="random positive increments" difficulty="Good luck!" values="B742FEAF,B673A3F0,B6B42D41,B6C710A1,B6F23FC4,B72FA3A8"/>
+		<ipidsequence class="All zeros" values="0,0,0,0,0,0"/>
+		<tcptssequence class="100HZ" values="30299,302A5,302B1,302BD,302C9,302D5"/>
+		<distance value="1"/>
+	</host>
+	<host>
+		<status state="down"/>
+		<address addr="127.0.0.2" addrtype="ipv4"/>
+	</host>
+	<host>
+		<status state="up"/>
+		<address addr="127.0.0.3" addrtype="ipv4"/>
+		<hostnames>
+			<hostname name="host_3" type="PTR"/>
+		</hostnames>
+		<ports>
+			<extraports state="filtered" count="1644"/>
+			<port protocol="tcp" portid="112">
+				<state state="open"/>
+				<service name="rpcbind" version="2" method="probed" conf="10"/>
+			</port>
+			<port protocol="tcp" portid="113">
+				<state state="open"/>
+				<owner name="identd"/>
+				<service name="ident" product="OpenBSD identd" method="probed" conf="10"/>
+			</port>
+			<port protocol="tcp" portid="21">
+				<state state="open"/>
+				<owner name="root"/>
+				<service name="ftp" product="ProFTPD" version="1.2.5rc1" method="probed" conf="10"/>
+			</port>
+			<port protocol="tcp" portid="22">
+				<state state="open"/>
+				<owner name="root"/>
+				<service name="ssh" product="OpenSSH" version="3.4p1" extrainfo="protocol 1.99" method="probed" conf="10"/>
+			</port>
+			<port protocol="tcp" portid="25">
+				<state state="open"/>
+				<owner name="root"/>
+				<service name="smtp" product="Exim smtpd" version="3.35" method="probed" conf="10" servicefp="SF-Port25-TCP:V=3.48%D=11/5%Time=3FA9032C%r(NULL,57,&quot;220\x20s0002\.berger\.com\x20ESMTP\x20Oracle\x20Email\x20Server\x20SMTP\x20Inbound\x20Server\t9\.0\.4\.0\.0\x20\t\x20\x20Ready\r\n&quot;)%r(Help,17D,&quot;220\x20s0002\.berger\.com\x20ESMTP\x20Oracle\x20Email\x20Server\x20SMTP\x20Inbound\x20Server\t9\.0\.4\.0\.0\x20\t\x20\x20Ready\r\n214-2\.3\.0\x20This\x20is\x20Oracle\x20eMail\x20SMTP\x20Server\n214-2\.3\.0\x20\x20\x20\x20\x20\x20\x20\x20\x20HELO\x20\x20\x20\x20EHLO\x20\x20\x20\x20MAIL\x20\x20\x20\x20RCPT\x20\x20\x20\x20DATA\n214-2\.3\.0\x20\x20\x20\x20\x20\x20\x20\x20\x20RSET\x20\x20\x20\x20NOOP\x20\x20\x20\x20QUIT\x20\x20\x20\x20HELP\x20\x20\x20\x20DSN\n214-2\.3\.0\x20For\x20more\x20info\x20use\x20\&quot;HELP\x20&lt;topic&gt;\&quot;\.\n214-2\.3\.0\x20For\x20local\x20information\x20send\x20email\x20to\x20Postmaster\x20at\x20your\x20site\.\n214\x202\.3\.0\x20End\x20of\x20HELP\x20info\n&quot;);"/>
+			</port>
+			<port protocol="tcp" portid="26">
+				<state state="open"/>
+				<service name="ssh" product="OpenSSH" version="3.6.1p1" extrainfo="protocol 1.99" method="probed" conf="10"/>
+			</port>
+			<port protocol="udp" portid="80">
+				<state state="open"/>
+				<owner name="www-data"/>
+				<service name="http" product="Apache httpd" version="1.3.26" extrainfo="(Unix) Debian GNU/Linux" method="probed" conf="10"/>
+			</port>
+			<port protocol="tcp" portid="953">
+				<state state="open"/>
+				<service name="rndc" method="table" conf="3" servicefp="SF-Port21-TCP:V=3.48%D=11/5%Time=3FA9032C%r(NULL,32,&quot;220\x20Oracle\x20Internet\x20File\x20System\x20FTP\x20Server\x20ready\r\n&quot;)%r(GenericLines,53,&quot;220\x20Oracle\x20Internet\x20File\x20System\x20FTP\x20Server\x20ready\r\n200\x20Connection\x20closed,\x20good\x20bye\r\n&quot;)%r(Help,57,&quot;220\x20Oracle\x20Internet\x20File\x20System\x20FTP\x20Server\x20ready\r\n500\x20HELP:\x20command\x20not\x20understood\.\r\n&quot;);"/>
+			</port>
+		</ports>
+	</host>
+	<host>
+		<status state="up"/>
+		<address addr="127.0.0.4" addrtype="ipv4"/>
+		<hostnames>
+			<hostname name="host_4" type="PTR"/>
+		</hostnames>
+		<ports>
+			<extraports state="closed" count="1640"/>
+			<port protocol="tcp" portid="111">
+				<state state="open"/>
+				<service name="rpcbind" version="2" extrainfo="rpc #100000" method="probed" conf="10"/>
+			</port>
+		</ports>
+		<os>
+			<portused state="open" proto="tcp" portid="22"/>
+			<portused state="closed" proto="tcp" portid="1"/>
+			<osmatch name="Linux Kernel 2.4.0 - 2.5.20" accuracy="100"/>
+			<osmatch name="Solaris 9" accuracy="99"/>
+			<osclass type="router" vendor="Redback" osfamily="AOS" accuracy="97"/>
+			<osclass type="broadband router" vendor="Thomson" osfamily="embedded" accuracy="97"/>
+			<osclass type="switch" vendor="Fore" osfamily="embedded" accuracy="92"/>
+			<osclass type="printer" vendor="Xerox" osfamily="embedded" accuracy="91"/>
+			<osclass type="broadband router" vendor="Redback" osfamily="embedded" accuracy="90"/>
+			<osclass type="firewall" vendor="SonicWall" osfamily="embedded" accuracy="90"/>
+			<osclass type="switch" vendor="Enterasys" osfamily="embedded" accuracy="90"/>
+			<osclass type="WAP" vendor="Cisco" osfamily="embedded" accuracy="90"/>
+			<osclass type="broadband router" vendor="Alcatel" osfamily="embedded" accuracy="90"/>
+			<osclass type="general purpose" vendor="Sun" osfamily="SunOS" accuracy="90"/>
+			<osclass type="general purpose" vendor="Linux" osfamily="Linux" osgen="2.4.x" accuracy="50"/>
+			<osfingerprint fingerprint=" SCAN(V=4.20%D=6/11%OT=22%CT=%CU=%PV=N%DS=1%G=N%M=001321%TM=466DE2F1%P=i686-pc-windows-windows) T5(Resp=Y%DF=Y%W=0%ACK=S++%Flags=AR%Ops=) T6(Resp=Y%DF=Y%W=0%ACK=O%Flags=R%Ops=) T7(Resp=Y%DF=Y%W=0%ACK=S++%Flags=AR%Ops=) PU(Resp=Y%DF=N%TOS=C0%IPLEN=164%RIPTL=148%RID=E%RIPCK=E%UCK=E%ULEN=134%DAT=E) "/>
+		</os>
+		<tcpsequence index="19825" class="random positive increments" difficulty="Worthy challenge" values="E4C680EA,E4C8D295,E4CB1032,E4CD94FF,E4CF761A,E4D240A2"/>
+		<ipidsequence class="Incremental" values="C4BE,C4C6,C4CC,C4CE,C4D4,C4DC"/>
+		<tcptssequence class="none returned (unsupported)"/>
+		<distance value="10"/>
+	</host>
+	<runstats>
+		<finished time="1057088900" timestr="Tue Jul  1 14:48:20 2003"/>
+		<hosts up="1" down="0" total="1"/>
+<!-- Nmap run completed at Tue Jul  1 14:48:20 2003; 1 IP address (1 host up) scanned in 16.970 seconds -->
+	</runstats>
+</nmaprun>

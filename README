@@ -44,13 +44,20 @@ Run this in the command prompt:
 This should contact the ActiveState respository, download the file and install it
 automagically.
 
+CPAN AUTOMATIC INSTALL (If you are missing dependencies)
+
+Run this in the command prompt to install directly from CPAN (may need root priviledges):
+
+	perl -MCPAN -e 'install Nmap::Parser'
+	
 
 DEPENDENCIES
 
 This module requires these other modules and libraries:
 
 	XML::Twig 3.16+
-	Storable
+	Storable (comes with Perl 5+)
+	
 
 In addition, you will need nmap 3.00+. You don't exactly need it, but this
 version of nmap supports the xml output that this module can parse. So, you do

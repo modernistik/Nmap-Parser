@@ -6,6 +6,12 @@ Latest version: http://code.google.com/p/nmap-parser/
 Website:        http://nmapparser.wordpress.com
                 http://code.google.com/p/nmap-parser/
 	
+Changes for 1.14
+	- Added cache_scan() to save the output of a parsescan() to a file before parsing.
+	- Added new tests for servicefp fingerpriting and cache_scan().
+	- Ran PerlTidy against module and other tools
+	- Updated documentation
+	
 Changes for 1.13
 	- Added fingerprint() to Service object (thanks jpomiane)
 	- Added documentation.

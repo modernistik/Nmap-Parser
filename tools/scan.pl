@@ -8,129 +8,125 @@ use File::Spec;
 use Pod::Usage;
 use vars qw(%G);
 
-
 $G{nmap_exe} = find_exe();
 
 my $np = new Nmap::Parser;
 
-print "\nscan.pl - ( http://nmapparser.wordpress.com )\n",
-	('-'x80),"\n\n";
-        
-        
+print "\nscan.pl - ( http://nmapparser.wordpress.com )\n", ( '-' x 80 ), "\n\n";
+
 GetOptions(
-		'help|h|?'		=> \$G{helpme},
-                'nmap=s'                => \$G{nmap},
-                'xml=s'			=> \$G{file}
-) or (pod2usage(-exitstatus => 0, -verbose => 2));
+    'help|h|?' => \$G{helpme},
+    'nmap=s'   => \$G{nmap},
+    'xml=s'    => \$G{file}
+) or ( pod2usage( -exitstatus => 0, -verbose => 2 ) );
 
+$np->callback( \&host_handler );
 
-$np->callback(\&host_handler);
-
-if(-e $G{file}){
-	print "Parsing file: ".$G{file}."\n\n";
-	$np->parsefile($G{file});
-} elsif($G{nmap} && scalar @ARGV)
-{	
-	print "Using nmap exe: ".$G{nmap}."\n\n";
-	$np->parsescan($G{nmap},'-sVU -O -F --randomize_hosts',@ARGV);
-} else 
-	{pod2usage(-exitstatus => 0, -verbose => 2)}
+if ( -e $G{file} ) {
+    print "Parsing file: " . $G{file} . "\n\n";
+    $np->parsefile( $G{file} );
+}
+elsif ( $G{nmap} && scalar @ARGV ) {
+    print "Using nmap exe: " . $G{nmap} . "\n\n";
+    $np->parsescan( $G{nmap}, '-sVU -O -F --randomize_hosts', @ARGV );
+}
+else { pod2usage( -exitstatus => 0, -verbose => 2 ) }
 
 sub host_handler {
     my $host = shift;
-    print ' > '.$host->ipv4_addr."\n";
-    print "\t[+] Status: (".uc($host->status).")\n";
-    if($host->status eq 'up'){
+    print ' > ' . $host->ipv4_addr . "\n";
+    print "\t[+] Status: (" . uc( $host->status ) . ")\n";
+    if ( $host->status eq 'up' ) {
 
-        tab_print("Hostname(s)",$host->all_hostnames());
-	tab_print("Uptime",($host->uptime_seconds())." seconds") if($host->uptime_seconds());
-	tab_print("Last Rebooted",$host->uptime_lastboot()) if($host->uptime_lastboot);
+        tab_print( "Hostname(s)", $host->all_hostnames() );
+        tab_print( "Uptime", ( $host->uptime_seconds() ) . " seconds" )
+          if ( $host->uptime_seconds() );
+        tab_print( "Last Rebooted", $host->uptime_lastboot() )
+          if ( $host->uptime_lastboot );
         os_sig_print($host);
         port_service_print($host);
     }
-    
-print "\n\n";
-	
+
+    print "\n\n";
+
 }
 
 sub os_sig_print {
-	my $host = shift;	
-	my $os = $host->os_sig();
-	print "\t[+] OS Names :\n" if($os->name_count > 0);
-	for my $name ($os->all_names()){print "\t\t$name\n";}
-	
-	if($os->class_count > 0){
-	print "\t[+] OS Classes :\n"; 
-	printf("\t\t%-16s %10s (%8s) [%3s] {%2s}\n", 'TYPE','VENDOR','OSFAMILY','VERSION','ACCURACY');
-	print "\t\t".('-'x60)."\n";
-	
-	for (my $i = 0; $i < $os->class_count() ; $i++)
-	{printf("\t\t%-16s %10s (%8s) [%7s] %4s%%\n", $os->type($i),$os->vendor($i),$os->osfamily($i),$os->osgen($i),$os->class_accuracy($i));}
-	}
+    my $host = shift;
+    my $os   = $host->os_sig();
+    print "\t[+] OS Names :\n" if ( $os->name_count > 0 );
+    for my $name ( $os->all_names() ) { print "\t\t$name\n"; }
+
+    if ( $os->class_count > 0 ) {
+        print "\t[+] OS Classes :\n";
+        printf( "\t\t%-16s %10s (%8s) [%3s] {%2s}\n",
+            'TYPE', 'VENDOR', 'OSFAMILY', 'VERSION', 'ACCURACY' );
+        print "\t\t" . ( '-' x 60 ) . "\n";
+
+        for ( my $i = 0 ; $i < $os->class_count() ; $i++ ) {
+            printf(
+                "\t\t%-16s %10s (%8s) [%7s] %4s%%\n",
+                $os->type($i),     $os->vendor($i),
+                $os->osfamily($i), $os->osgen($i),
+                $os->class_accuracy($i)
+            );
+        }
+    }
 }
 
-
 sub port_service_print {
-        my $host = shift;
-	print "\t[+] TCP Ports :\n" if($host->tcp_port_count);
-	printf("\t\t%-6s %-10s (%-14s) [%-8s] %s\n", 'PORT','SERVICE','PRODUCT','VERSION','EXTRA');
-	print "\t\t".('-'x60)."\n";
-        
-	for my $port ($host->tcp_open_ports){
-            my $svc = $host->tcp_service($port);
-            
-	printf("\t\t%-6s %-10s (%-14s) [%-8s] %s\n",
-			$port,
-			$svc->name,
-			$svc->product,
-			$svc->version,
-			$svc->extrainfo);
-	}
+    my $host = shift;
+    print "\t[+] TCP Ports :\n" if ( $host->tcp_port_count );
+    printf( "\t\t%-6s %-10s (%-14s) [%-8s] %s\n",
+        'PORT', 'SERVICE', 'PRODUCT', 'VERSION', 'EXTRA' );
+    print "\t\t" . ( '-' x 60 ) . "\n";
 
-	print "\t[+] UDP Ports :\n" if($host->udp_port_count);
-	for my $port ($host->udp_open_ports){
-	    my $svc = $host->udp_service($port);
-            
-        printf("\t\t%-6s %-10s (%-14s) [%-8s] %s\n", 'PORT','SERVICE','PRODUCT','VERSION','EXTRA');
-	print "\t\t".('-'x60)."\n";
-	
-	printf("\t\t%-6s %-10s (%-14s) [%-8s] %s\n",
-			$port,
-			$svc->name,
-			$svc->product,
-			$svc->version,
-			$svc->extrainfo);
-	}
+    for my $port ( $host->tcp_open_ports ) {
+        my $svc = $host->tcp_service($port);
+
+        printf( "\t\t%-6s %-10s (%-14s) [%-8s] %s\n",
+            $port, $svc->name, $svc->product, $svc->version, $svc->extrainfo );
+    }
+
+    print "\t[+] UDP Ports :\n" if ( $host->udp_port_count );
+    for my $port ( $host->udp_open_ports ) {
+        my $svc = $host->udp_service($port);
+
+        printf( "\t\t%-6s %-10s (%-14s) [%-8s] %s\n",
+            'PORT', 'SERVICE', 'PRODUCT', 'VERSION', 'EXTRA' );
+        print "\t\t" . ( '-' x 60 ) . "\n";
+
+        printf( "\t\t%-6s %-10s (%-14s) [%-8s] %s\n",
+            $port, $svc->name, $svc->product, $svc->version, $svc->extrainfo );
+    }
 }
 
 sub tab_print {
     my $title = shift;
     print "\t[+] $title :\n";
-    for my $a (@_)
-    {print "\t\t$a\n";}
-    
+    for my $a (@_) { print "\t\t$a\n"; }
+
 }
 
 sub find_exe {
 
-
     my $exe_to_find = 'nmap';
     $exe_to_find =~ s/\.exe//;
-    local($_);
-    local(*DIR);
+    local ($_);
+    local (*DIR);
 
-    for my $dir (File::Spec->path()) {
-        opendir(DIR,$dir) || next;
-        my @files = (readdir(DIR));
+    for my $dir ( File::Spec->path() ) {
+        opendir( DIR, $dir ) || next;
+        my @files = ( readdir(DIR) );
         closedir(DIR);
 
         my $path;
         for my $file (@files) {
             $file =~ s/\.exe$//;
-            next unless($file eq $exe_to_find);
+            next unless ( $file eq $exe_to_find );
 
-            $path = File::Spec->catfile($dir,$file);
-            next unless -r $path && (-x _ || -l _);
+            $path = File::Spec->catfile( $dir, $file );
+            next unless -r $path && ( -x _ || -l _ );
 
             return $path;
             last DIR;
@@ -140,6 +136,7 @@ sub find_exe {
 }
 
 __END__
+
 =pod
 
 =head1 NAME
@@ -273,7 +270,7 @@ L<http://www.cpanforum.com/dist/Nmap-Parser>
 =head2 Bug Reports
 
 Please submit any bugs to:
-L<http://sourceforge.net/tracker/?group_id=97509&atid=618345>
+L<http://code.google.com/p/nmap-parser/w/list>
 
 B<Please make sure that you submit the xml-output file of the scan which you are having
 trouble.> This can be done by running your scan with the I<-oX filename.xml> nmap switch.
@@ -282,7 +279,7 @@ Please remove any important IP addresses for security reasons.
 =head2 Feature Requests
 
 Please submit any requests to:
-L<http://sourceforge.net/tracker/?atid=618348&group_id=97509&func=browse>
+L<http://code.google.com/p/nmap-parser/w/list>
 
 =head1 SEE ALSO
 
@@ -294,7 +291,7 @@ homepage can be found at: L<http://www.insecure.org/nmap/>.
 
 =head1 AUTHOR
 
-Anthony G Persaud L<http://www.anthonypersaud.com>
+Anthony G Persaud <apersaud[at]gmail.com> L<http://www.anthonypersaud.com>
 
 =head1 COPYRIGHT
 
