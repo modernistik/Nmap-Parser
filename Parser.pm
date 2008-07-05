@@ -6,7 +6,7 @@ use XML::Twig;
 use Storable qw(dclone);
 use vars qw($VERSION %D);
 
-$VERSION = 1.14;
+$VERSION = 1.16;
 
 sub new {
 
@@ -1300,8 +1300,6 @@ Returns the tunnel value. (If available)
 =item B<fingerprint()>
 
 Returns the service fingerprint. (If available)
-
-=back
  
 =item B<version()>
 
@@ -1415,7 +1413,7 @@ create custom security audit tools using some of the nice features
 of the Nmap::Parser module. Hopefully this can double as a tutorial. 
 More tutorials (articles) can be found at L<nmapparser.wordpress.com>
 
-=head2 Real-Time Scanning - (no better C<time()> like C<'now'>)
+=head2 Real-Time Scanning
 
 You can run a nmap scan and have the parser parse the information automagically.
 The only constraint is that you cannot use '-oX', '-oN', or '-oG' as one of your
@@ -1433,9 +1431,19 @@ arguments for nmap command line parameters passed to parsescan().
  	print $host->hostname."\n";
 	#do mor stuff...
  }
- 
 
-=head2 Callbacks - (C<not our $normal *69>)
+If you would like to run the scan using parsescan() but also save the scan xml output,
+you can use cache_scan(). You must call cache_scan() BEFORE you initiate the parsescan() method.
+
+ use Nmap::Parser;
+ my $np = new Nmap::Parser;
+
+ #telling np to save output
+ $np->cache_scan('nmap.localhost.xml'); 
+ $np->parsescan('/usr/bin/nmap','-F','localhost');
+ #do other stuff...
+
+=head2 Callbacks
 
 This is probably the easiest way to write a script with using Nmap::Parser,
 if you don't need the general scan session information. During the parsing
