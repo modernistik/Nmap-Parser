@@ -2,7 +2,7 @@
 #Anthony G. Persaud
 
 use strict;
-use Nmap::Parser 1.00;
+use Nmap::Parser;
 use Getopt::Long;
 use File::Spec;
 use Pod::Usage;
@@ -291,9 +291,11 @@ homepage can be found at: L<http://www.insecure.org/nmap/>.
 
 =head1 AUTHOR
 
-Anthony G Persaud <apersaud[at]gmail.com> L<http://www.anthonypersaud.com>
+Anthony G Persaud L<http://www.anthonypersaud.com>
 
 =head1 COPYRIGHT
+
+Copyright (c) <2003-2009> <Anthony G. Persaud>
 
 MIT License
 
@@ -314,5 +316,4 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
-
 =cut

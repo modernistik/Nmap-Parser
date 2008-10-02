@@ -2,7 +2,7 @@
 
 =pod
 
-Anthony G Persaud <apersaud@gmail.com> L<http://www.anthonypersaud.com>
+Anthony G Persaud L<http://www.anthonypersaud.com>
 
 Copyright (c) <2007> <Anthony G. Persaud>
 
@@ -401,9 +401,10 @@ sub _help {
    pdev>
   
 
-Anthony G Persaud <apersaud@gmail.com> L<http://www.anthonypersaud.com>
+Anthony G Persaud L<http://www.anthonypersaud.com>
 
-Copyright (c) <2007> <Anthony G. Persaud>
+
+Copyright (c) <2003-2009> <Anthony G. Persaud>
 
 MIT License
 
