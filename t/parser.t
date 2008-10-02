@@ -5,7 +5,7 @@ use blib;
 use Nmap::Parser;
 use File::Spec;
 use Cwd;
-use Test::More tests => 150;
+use Test::More tests => 153;
 
 use constant HOST1 => '127.0.0.1';
 use constant HOST2 => '127.0.0.2';
@@ -142,6 +142,8 @@ sub host_1 {
         [ 'host1', 'host1_2' ],
         'Host1: all_hostnames'
     );
+
+    #Testing Port Information
     is( $host->extraports_state(), 'closed', 'Host1: extraports_state' );
     is( $host->extraports_count(), 2038,     'Host1: extraports_count' );
 
@@ -197,6 +199,20 @@ sub host_1 {
         $host->udp_closed_ports(),
         'Host1: udp_closed_ports'
     );
+
+    $host->tcp_del_ports('80');
+
+    is_deeply( [ $host->tcp_ports('open') ],
+        [qw(111 443 555 631)],
+        'Host1: tcp_del_ports(80) (should not be open)' );
+
+    $host->tcp_del_ports( 111, 443 );
+    is_deeply( [ $host->tcp_ports('open') ],
+        [qw(555 631)], 'Host1: tcp_del_ports(111,443) (should not be open)' );
+
+    is_deeply( [ $host->tcp_ports() ],
+        [qw(22 25 555 631 4903)],
+        'Host1: tcp_ports() after deleting 80,111,443' );
 
     is( $host->uptime_seconds(), '1973', 'Host1: uptime_seconds' );
     is(

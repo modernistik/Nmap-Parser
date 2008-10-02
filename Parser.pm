@@ -6,7 +6,7 @@ use XML::Twig;
 use Storable qw(dclone);
 use vars qw($VERSION %D);
 
-$VERSION = 1.16;
+$VERSION = 1.17;
 
 sub new {
 
@@ -625,6 +625,20 @@ sub extraports_state { return $_[0]->{ports}{extraports}{state}; }
 sub extraports_count { return $_[0]->{ports}{extraports}{count}; }
 sub distance         { return $_[0]->{distance}; }
 
+sub _del_port {
+    my $self    = shift;
+    my $proto   = pop;     #portid might be empty, so this goes first
+    my @portids = @_;
+    @portids = grep { $_ + 0 } @portids;
+
+    unless ( scalar @portids ) {
+        warn "[Nmap-Parser] No port number given to del_port()\n";
+        return undef;
+    }
+
+    delete $self->{ports}{$proto}{$_} for (@portids);
+}
+
 sub _get_ports {
     my $self          = shift;
     my $proto         = pop;          #param might be empty, so this goes first
@@ -673,6 +687,9 @@ sub udp_port_count { return $_[0]->{ports}{udp_port_count}; }
 
 sub tcp_port_state { return _get_port_state( @_, 'tcp' ); }
 sub udp_port_state { return _get_port_state( @_, 'udp' ); }
+
+sub tcp_del_ports { return _del_port( @_, 'tcp' ); }
+sub udp_del_ports { return _del_port( @_, 'udp' ); }
 
 sub tcp_service {
     my $self   = shift;
@@ -1204,12 +1221,17 @@ be counted as an 'open' port as well as a 'filtered' one.>
 
 Returns the total of TCP|UDP ports scanned respectively.
 
+=item B<tcp_del_ports($portid, [$portid, ...])>
+
+=item B<udp_del_ports($portid, [ $portid, ...])>
+
+Deletes the current $portid from the list of ports for given protocol.
+
 =item B<tcp_port_state($portid)>
 
 =item B<udp_port_state($portid)>
 
 Returns the state of the given port, provided by the port number in $portid.
-
 
 =item B<tcp_open_ports()>
 
@@ -1544,7 +1566,7 @@ Anthony G Persaud L<http://www.anthonypersaud.com>
 
 =head1 COPYRIGHT
 
-Copyright (c) <2003-2008> <Anthony G. Persaud>
+Copyright (c) <2003-2009> <Anthony G. Persaud>
 
 MIT License
 

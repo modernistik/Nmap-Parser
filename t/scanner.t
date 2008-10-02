@@ -19,15 +19,15 @@ SKIP: {
     skip '[Nmap-Parser] Could not find nmap executable in path', 6
       if ( $nmap_path eq '' );
     ok( $nmap_path, "Exe Path: $nmap_path" );
-    
-	skip "[Nmap-Parser] No self scanning with MSWin32", 4
+
+    skip "[Nmap-Parser] No self scanning with MSWin32", 4
       if ( $^O eq 'MSWin32' || $^O =~ /cygwin/ );
     ok(
         $np->parsescan( $nmap_path, '-p 1-80', IP ),
         'Running parsescan against ' . IP
     );
 
-	#if everything passed we can do another scan using the new cache_scan() function
+#if everything passed we can do another scan using the new cache_scan() function
     skip
 "[Nmap-Parser] Current user does not have read/write permissions in this directory.",
       3
@@ -47,7 +47,8 @@ SKIP: {
 }
 
 sub find_nmap {
-	#I think I borrowed this from someone (or from a Cookbook)
+
+    #I think I borrowed this from someone (or from a Cookbook)
     my $exe_to_find = 'nmap';
     $exe_to_find =~ s/\.exe//;
     local ($_);
