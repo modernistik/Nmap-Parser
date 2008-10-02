@@ -3,8 +3,13 @@ Revision history for Perl extension Nmap::Parser.
 Latest version: http://code.google.com/p/nmap-parser/
 		http://search.cpan.org/~apersaud/Nmap-Parser/
 
-Website:        http://nmapparser.wordpress.com
-                http://code.google.com/p/nmap-parser/
+Website:		http://nmapparser.wordpress.com
+				http://code.google.com/p/nmap-parser/
+
+Changes for 1.18
+	- Added enhancement request by stevekatieterabyte for tcp_del_port and udp_del_port
+	  (Thanks!). Modified the patch to work with a list of ports.
+
 
 Changes for 1.16
 	- Fixed minor bug in scanner.t where the number of tests to skip when nmap was not found was incorrect.
@@ -16,11 +21,11 @@ Changes for 1.14
 	- Added new tests for servicefp fingerpriting and cache_scan().
 	- Ran PerlTidy against module and other tools
 	- Updated documentation
-	
+
 Changes for 1.13
 	- Added fingerprint() to Service object (thanks jpomiane)
 	- Added documentation.
-	
+
 Changes for 1.12
 	- Added references to Google Code Project page.
 
@@ -37,18 +42,18 @@ Changes for 1.06
 	- New os_fingerprint() method for Nmap::Parser::Host::OS
 	- Updated documentation
 	- Updated scan.pl to also read xml files (good for debugging)
-	
+
 Changes for 1.05
 	- Major speed improvements (less compile time)
 	- Major reduction in unwanted memory usage
 	- Redundant functions (or less used functions) are now created
 	dynamically. (AUTOLOAD)
 	- Documentation fixes
-	
+
 Changes for 1.00
 	- To see the changes, please read over the new documentation
-        - Internal code is much (MUCH) cleaner and readable
-        - removed 'ducttape' fixes and made stable & roubust changes
+		- Internal code is much (MUCH) cleaner and readable
+		- removed 'ducttape' fixes and made stable & roubust changes
 	- improved performance, removed unwanted code (legacy)
 	- complete overhaul of internal code - new Framework
 	- support for IPv6 addresses
@@ -63,19 +68,19 @@ Changes for 1.00
 	- Removed parsing filters (finally)
 	- All indexes now start at 0 (not at 1).
 	- Removed internal OS generic matching function since this is given by
-	    nmap now in the osclass tags
+		nmap now in the osclass tags
 	- Removed the use of constants for indexes
 	- Nmap::Parser::Host::Service object
-	    provides OO interface to service information for a given port
+		provides OO interface to service information for a given port
 	- Nmap::Parser::Host::OS object
-	    provides OO interface to OS signature information for a given host
+		provides OO interface to OS signature information for a given host
 	- Nmap::Parser::Session replaces old Nmap::Parser::ScanInfo package
 	- Nmap2SQLite security script included
 	- removed old security tools
 	- rewrote scan.pl (from scanhost.pl)
 	- rewrote old tools to fit new framework
 	- Fully updated documentation
-	
+
 Changes for 0.80
 	- Support for multiple instances of Nmap::Parser objects without overwriting data
 	- All data (except filters) is are localized per object
@@ -83,13 +88,13 @@ Changes for 0.80
 	- When filters are used to skip portinfo, all ports return state of 'closed'.
 	- Nmap::Parser::XML no longer supported in distribution
 		(you should change all calls to Nmap::Parser::XML to Nmap::Parser)
-		
+
 Changes for 0.79
 	- fixed ports that were declared as 'open|filtered'
-	    these now are counted as both 'open' and 'filtered'
-	    when using tcp_ports() and udp_ports().
+		these now are counted as both 'open' and 'filtered'
+		when using tcp_ports() and udp_ports().
 	- sent a patch for XML::Twig in order to fix. It is now released in
-	    XML:Twig 3.16
+		XML:Twig 3.16
 	- added start_str() and time_str() : they return the human readable format
 	of the scan start time and scan finish time (respectively).
 	- updated for Nmap 3.81
@@ -203,7 +208,7 @@ Changes for 0.68
 	- tcp_ports and udp_ports can take a parameter to filter what port list
 		you wish to receive. It selects states based on port content
 		state tag: filtered, closed, or open
-        - previous versions (0.64 or earlier) of the parser, no arguments
+		- previous versions (0.64 or earlier) of the parser, no arguments
 	to tcp_ports and udp_ports would return the whole hashref of all the
 	ports, this is now deprecated. Use the newly created functions
 	tcp_service_name, tcp_service_proto, tcp_service_rpcnum,
@@ -219,7 +224,7 @@ Changes for 0.66
 		This includes register_host_callback, and reset_host_callback
 	- tcp_ports and udp_ports do not return hashref of all ports, only if
 		passed a port number as an argument.The argument must be a port
-		number.	They default to returning an array of port numbers.
+		number. They default to returning an array of port numbers.
 	- added short-cuts tcp_ports_count and udp_ports_count functions
 	- added tcp_service_proto and udp_service_proto
 	- added tcp_service_rpcnum and udp_service_rpcnum
@@ -299,8 +304,8 @@ Changes for 0.50
 
 Changes for 0.40
 	- added new package called ScanInfo (Nmap::Parser::ScanInfo
-        	this contains methods that make it easier to access the
-        	scan information
+			this contains methods that make it easier to access the
+			scan information
 	- added new package called Host (Nmap::Parser::Host),
 		which makes it easier to access values for each of the
 		hosts found. See documentation.
