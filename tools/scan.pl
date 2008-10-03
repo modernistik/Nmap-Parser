@@ -12,7 +12,7 @@ $G{nmap_exe} = find_exe();
 
 my $np = new Nmap::Parser;
 
-print "\nscan.pl - ( http://nmapparser.wordpress.com )\n", ( '-' x 80 ), "\n\n";
+print "\nscan.pl - ( http://anthonypersaud.com )\n", ( '-' x 80 ), "\n\n";
 
 GetOptions(
     'help|h|?' => \$G{helpme},
@@ -285,13 +285,13 @@ L<http://code.google.com/p/nmap-parser/w/list>
 
 L<Nmap::Parser>
 
-The Nmap::Parser page can be found at: L<http://nmapparser.wordpress.com> or L<http://npx.sourceforge.net>.
+The Nmap::Parser page can be found at: L<http://anthonypersaud.com/category/nmap-parser/>.
 It contains the latest developments on the module. The nmap security scanner
 homepage can be found at: L<http://www.insecure.org/nmap/>.
 
 =head1 AUTHOR
 
-Anthony G Persaud L<http://www.anthonypersaud.com>
+Anthony G Persaud L<http://anthonypersaud.com>
 
 =head1 COPYRIGHT
 

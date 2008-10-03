@@ -51,7 +51,7 @@ unless ( $G{file} || $G{scan} ) {
     pod2usage( -exitstatus => 0, -verbose => 2 );
 }
 
-print "\nnmap2sqlite.pl - ( http://nmapparser.wordpress.com )\n",
+print "\nnmap2sqlite.pl - ( http://anthonypersaud.com )\n",
   ( '-' x 50 ), "\n\n";
 
 if ( $G{scan} && $G{nmap} eq '' ) {
@@ -308,13 +308,13 @@ L<http://code.google.com/p/nmap-parser/issues/list>
 
 L<Nmap::Parser>
 
-The Nmap::Parser page can be found at: L<http://nmapparser.wordpress.com> or L<http://npx.sourceforge.net>.
+The Nmap::Parser page can be found at: L<http://anthonypersaud.com/category/nmap-parser/>.
 It contains the latest developments on the module. The nmap security scanner
 homepage can be found at: L<http://www.insecure.org/nmap/>.
 
 =head1 AUTHOR
 
-Anthony G Persaud L<http://www.anthonypersaud.com>
+Anthony G Persaud L<http://anthonypersaud.com>
 
 =head1 COPYRIGHT
 

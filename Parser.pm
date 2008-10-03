@@ -1433,7 +1433,7 @@ index starts at 0.
 I think some of us best learn from examples. These are a couple of examples to help
 create custom security audit tools using some of the nice features
 of the Nmap::Parser module. Hopefully this can double as a tutorial. 
-More tutorials (articles) can be found at L<nmapparser.wordpress.com>
+More tutorials (articles) can be found at L<http://anthonypersaud.com/category/nmap-parser/>
 
 =head2 Real-Time Scanning
 
@@ -1556,13 +1556,13 @@ Please remove any important IP addresses for security reasons. It saves time in 
 
  nmap, XML::Twig
 
-The Nmap::Parser page can be found at: L<http://nmapparser.wordpress.com> or L<http://code.google.com/p/nmap-parser/>.
+The Nmap::Parser page can be found at: L<http://anthonypersaud.com/category/nmap-parser/> or L<http://code.google.com/p/nmap-parser/>.
 It contains the latest developments on the module. The nmap security scanner
 homepage can be found at: L<http://www.insecure.org/nmap/>.
 
 =head1 AUTHOR
 
-Anthony G Persaud L<http://www.anthonypersaud.com>
+Anthony G Persaud L<http://anthonypersaud.com>
 
 =head1 COPYRIGHT
 

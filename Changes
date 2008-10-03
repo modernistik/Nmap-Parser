@@ -3,8 +3,8 @@ Revision history for Perl extension Nmap::Parser.
 Latest version: http://code.google.com/p/nmap-parser/
 		http://search.cpan.org/~apersaud/Nmap-Parser/
 
-Website:		http://nmapparser.wordpress.com
-				http://code.google.com/p/nmap-parser/
+Website:		http://anthonypersaud.com/category/nmap-parser/
+
 
 Changes for 1.18
 	- Added enhancement request by stevekatieterabyte for tcp_del_port and udp_del_port
@@ -35,7 +35,7 @@ Changes for 1.11
 	- Added ignoring of taskend,taskbegin and taskprogress information.
 	- Added tests for nmap 4.20.
 	- Changed lisence to MIT.
-	- Points to new website http://nmapparser.wordpress.com
+	- Points to new website http://anthonypersaud.com/category/nmap-parser/
 
 Changes for 1.06
 	- Added patch for new OS fingerprint (Thanks Okan Demirmen)
@@ -315,7 +315,7 @@ Changes for 0.40
 
 COPYRIGHT AND LICENCE
 
-Copyright (C) 2003-2005 Anthony G Persaud L<http://www.anthonypersaud.com>
+Copyright (C) 2003-2005 Anthony G Persaud L<http://anthonypersaud.com>
 
 MIT License
 

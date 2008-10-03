@@ -11,8 +11,7 @@ that utilize the powerful port scanning abilities of nmap.
 INSTALLATION
 
 Latest version: http://code.google.com/p/nmap-parser/
-		http://search.cpan.org/~apersaud/Nmap-Parser/
-Website:        http://nmapparser.wordpress.com
+Website:        http://anthonypersaud.com/category/nmap-parser/
 
 
 MANUAL INSTALL
@@ -70,7 +69,7 @@ FOR CHANGE INFORMATION SEE THE "CHANGES" FILE
 
 COPYRIGHT AND LICENCE
 
-Copyright (C) 2003-2008 Anthony G Persaud L<http://www.anthonypersaud.com>
+Copyright (C) 2003-2008 Anthony G Persaud L<http://anthonypersaud.com>
 
 MIT License
 

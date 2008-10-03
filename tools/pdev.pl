@@ -2,7 +2,7 @@
 
 =pod
 
-Anthony G Persaud L<http://www.anthonypersaud.com>
+Anthony G Persaud L<http://anthonypersaud.com>
 
 Copyright (c) <2007> <Anthony G. Persaud>
 
@@ -401,7 +401,7 @@ sub _help {
    pdev>
   
 
-Anthony G Persaud L<http://www.anthonypersaud.com>
+Anthony G Persaud L<http://anthonypersaud.com>
 
 
 Copyright (c) <2003-2009> <Anthony G. Persaud>
