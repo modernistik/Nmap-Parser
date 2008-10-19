@@ -9,7 +9,7 @@ Website:		http://anthonypersaud.com/category/nmap-parser/
 Changes for 1.18
 	- Added enhancement request by stevekatieterabyte for tcp_del_port and udp_del_port
 	  (Thanks!). Modified the patch to work with a list of ports.
-
+	- Added Robin Bowes' modification of nmap2sqlite as nmap2db to support MySQL (Thanks!)
 
 Changes for 1.16
 	- Fixed minor bug in scanner.t where the number of tests to skip when nmap was not found was incorrect.
