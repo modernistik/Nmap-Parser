@@ -10,6 +10,7 @@ t/instance.xml
 t/nmap_results.xml
 t/parser.t
 t/scanner.t
-tools/nmap2sqlite.pl		Nmap scans to a DBI (SQLite) database
+tools/nmap2sqlite.pl	Nmap scans to a DBI (SQLite) database
+tools/nmap2db.pl		Nmap scans to a SQLite or MySQL database
 tools/scan.pl			Scan a set of hosts with Nmap-Parser
 tools/pdev.pl			A Perl dev console, useful for debugging
