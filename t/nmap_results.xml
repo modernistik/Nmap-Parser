@@ -28,8 +28,8 @@
     <taskend task="Connect() Scan" time="1181606575"/>
     <taskbegin task="RPCGrind Scan against spidey" time="1181606634"/>
     <taskend task="RPCGrind Scan against spidey" time="1181606638"/>
-    <host>
-        <status state="up"/>
+    <host starttime="0000000001" endtime="0000000002">
+        <status state="up" reason="user-set"/>
         <address addr="127.0.0.1" addrtype="ipv4"/>
         <address addr="00:09:5B:3F:7D:5E" vendor="Netgear" addrtype="mac"/>
         <hostnames>
@@ -38,8 +38,12 @@
         </hostnames>
         <ports>
             <extraports state="closed" count="2038"/>
+            <!-- <port protocol="tcp" portid="0">
+                           <state state="filtered" reason="no-response" reason_ttl="0"/>
+                           <service name="port0" method="table" conf="3"/>
+                       </port> -->
             <port protocol="tcp" portid="22">
-                <state state="filtered"/>
+                <state state="filtered" reason="no-response" reason_ttl="0"/>
                 <service name="ssh" method="table" conf="3"/>
             </port>
             <port protocol="tcp" portid="25">
@@ -88,6 +92,7 @@
         <ipidsequence class="All zeros" values="0,0,0,0,0,0"/>
         <tcptssequence class="100HZ" values="30299,302A5,302B1,302BD,302C9,302D5"/>
         <distance value="1"/>
+        <times srtt="-1" rttvar="-1" to="1000000" />
     </host>
     <host>
         <status state="down"/>

@@ -629,7 +629,7 @@ sub _del_port {
     my $self    = shift;
     my $proto   = pop;     #portid might be empty, so this goes first
     my @portids = @_;
-    @portids = grep { $_ + 0 } @portids;
+    @portids = grep {/\d+/ } @portids;
 
     unless ( scalar @portids ) {
         warn "[Nmap-Parser] No port number given to del_port()\n";
