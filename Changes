@@ -3,8 +3,12 @@ Revision history for Perl extension Nmap::Parser.
 Latest version: http://code.google.com/p/nmap-parser/
 		http://search.cpan.org/~apersaud/Nmap-Parser/
 
-Website:		http://anthonypersaud.com/category/nmap-parser/
+Website:	http://anthonypersaud.com/
 
+Changes for 1.20
+	- Solved Issue 2: Host-specific start_time and end_time.
+	- Applied Patch provided by briandlong on retrieving start_time and 	end_time attributes for host.
+	- Solved Issue 6: _del_port not removing port 0.
 
 Changes for 1.19
 	- Added enhancement request by stevekatieterabyte for tcp_del_port and udp_del_port
