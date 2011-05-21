@@ -4,6 +4,9 @@ Latest version: http://code.google.com/p/nmap-parser/
 		http://search.cpan.org/~apersaud/Nmap-Parser/
 
 Website:	http://anthonypersaud.com/
+Changes for 1.21
+    - Added support for hostscript and script tags
+    - Changed ipv4_sort() to use a 10x faster sort method
 
 Changes for 1.20
 	- Solved Issue 2: Host-specific start_time and end_time.

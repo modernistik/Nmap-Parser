@@ -3,6 +3,7 @@ package Nmap::Parser;
 use strict;
 use XML::Twig;
 use Storable qw(dclone);
+use Socket qw(inet_aton inet_ntoa);
 use vars qw($VERSION %D);
 
 #$Author$
@@ -145,17 +146,12 @@ sub purge {
 }
 
 sub ipv4_sort {
-    my $self = shift;
+    my $self = shift if ref $_[0];
 
     return (
-        sort {
-            my @ipa = split( '\.', $a );
-            my @ipb = split( '\.', $b );
-                 $ipa[0] <=> $ipb[0]
-              || $ipa[1] <=> $ipb[1]
-              || $ipa[2] <=> $ipb[2]
-              || $ipa[3] <=> $ipb[3]
-          } @_
+        map { inet_ntoa($_);}
+            sort { $a cmp $b } 
+            map { inet_aton($_); } @_
     );
 }
 
@@ -283,6 +279,7 @@ sub _host_tag_hdlr {
         $D{$$}{HOSTS}{$id}{tcpsequence}   = __host_tcpsequence_tag_hdlr($tag);
         $D{$$}{HOSTS}{$id}{ipidsequence}  = __host_ipidsequence_tag_hdlr($tag);
         $D{$$}{HOSTS}{$id}{tcptssequence} = __host_tcptssequence_tag_hdlr($tag);
+        $D{$$}{HOSTS}{$id}{hostscript} = __host_hostscript_tag_hdlr($tag);
         $D{$$}{HOSTS}{$id}{distance} =
           __host_distance_tag_hdlr($tag);    #returns simple value
         $D{$$}{HOSTS}{$id}{trace}         = __host_trace_tag_hdlr($tag);
@@ -378,6 +375,11 @@ sub __host_port_tag_hdlr {
           __host_service_tag_hdlr( $port_tag, $portid )
           if ( defined($proto) && defined($portid) );
 
+        #GET SCRIPT INFORMATION
+        $port_hashref->{$proto}{$portid}{service}{script} =
+          __host_script_tag_hdlr( $port_tag, $portid)
+          if ( defined($proto) && defined($portid) );
+
         #GET OWNER INFORMATION
         $port_hashref->{$proto}{$portid}{service}{owner} = $owner->{att}->{name}
           if ( defined($owner) );
@@ -418,6 +420,18 @@ sub __host_service_tag_hdlr {
     }
 
     return $service_hashref;
+}
+
+sub __host_script_tag_hdlr {
+    my $tag = shift;
+    my $script_hashref;
+
+    for ( $tag->children('script') ) {
+        chomp($script_hashref->{ $_->{att}->{id} } =
+            $_->{att}->{output});
+    }
+
+    return $script_hashref;
 }
 
 sub __host_os_tag_hdlr {
@@ -499,6 +513,7 @@ sub __host_tcpsequence_tag_hdlr {
     my $sequence_hashref;
     return undef unless ($sequence);
     $sequence_hashref->{class}  = $sequence->{att}->{class};
+    $sequence_hashref->{difficulty}  = $sequence->{att}->{difficulty};
     $sequence_hashref->{values} = $sequence->{att}->{values};
     $sequence_hashref->{index}  = $sequence->{att}->{index};
 
@@ -525,6 +540,17 @@ sub __host_tcptssequence_tag_hdlr {
     $sequence_hashref->{class}  = $sequence->{att}->{class};
     $sequence_hashref->{values} = $sequence->{att}->{values};
     return $sequence_hashref;
+}
+
+sub __host_hostscript_tag_hdlr {
+    my $tag = shift;
+    my $scripts = $tag->first_child('hostscript');
+    my $scripts_hashref;
+    return undef unless ($scripts);
+    for my $script ( $scripts->children('script') ) {
+        chomp($scripts_hashref->{ $script->{att}->{id} } =
+          $script->{att}->{output});
+    return $scripts_hashref;
 }
 
 sub __host_distance_tag_hdlr {
@@ -677,6 +703,17 @@ sub extraports_state { return $_[0]->{ports}{extraports}{state}; }
 sub extraports_count { return $_[0]->{ports}{extraports}{count}; }
 sub distance         { return $_[0]->{distance}; }
 
+sub hostscripts {
+    my $self = shift;
+    my $id = shift;
+    unless ( defined $id ) {
+        return sort keys %{ $self->{hostscript} };
+    }
+    else {
+        return $self->{hostscript}{$id};
+    }
+}
+
 sub all_trace_hops {
 
     my $self = shift;
@@ -828,6 +865,18 @@ sub new {
     my $self = shift || {};
     bless( $self, $class );
     return $self;
+}
+
+sub scripts {
+    my $self = shift;
+    my $id = shift;
+
+    unless ( defined $id ) {
+        return sort keys %{ $self->{script} };
+    }
+    else {
+        return $self->{script}{$id};
+    }
 }
 
 #Support for:
@@ -1323,6 +1372,13 @@ rebooted.
 Returns the number of seconds that have passed since the host's last boot from
 when the scan was performed.
 
+=item B<hostscripts()>
+
+=item B<hostscripts($name)>
+
+A basic call to hostscripts() returns a list of the names of the host scripts
+run. If C<$name> is given, it returns the text output of the script with that
+name, or undef if that script was not run.
 
 =item B<tcp_ports()>
 
@@ -1448,6 +1504,14 @@ Returns the service fingerprint. (If available)
 =item B<version()>
 
 Returns the version of the given product of the running service.
+
+=item B<scripts()>
+
+=item B<scripts($name)>
+
+A basic call to scripts() returns a list of the names of the scripts
+run for this port. If C<$name> is given, it returns the text output of the
+script with that name, or undef if that script was not run.
 
 =back
 

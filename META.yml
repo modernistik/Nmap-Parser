@@ -1,6 +1,6 @@
 --- #YAML:1.0
 name:               Nmap-Parser
-version:            1.2
+version:            1.21
 abstract:           parse nmap scan data with perl
 author:
     - Anthony Persaud
