@@ -150,7 +150,7 @@ sub ipv4_sort {
 
     return (
         map { inet_ntoa($_);}
-            sort { $a cmp $b } 
+            sort { $a cmp $b }
             map { inet_aton($_); } @_
     );
 }
@@ -550,6 +550,7 @@ sub __host_hostscript_tag_hdlr {
     for my $script ( $scripts->children('script') ) {
         chomp($scripts_hashref->{ $script->{att}->{id} } =
           $script->{att}->{output});
+    }
     return $scripts_hashref;
 }
 
