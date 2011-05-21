@@ -5,7 +5,7 @@ use blib;
 use Nmap::Parser;
 use File::Spec;
 use Cwd;
-use Test::More tests => 153;
+use Test::More tests => 168;
 
 use constant HOST1 => '127.0.0.1';
 use constant HOST2 => '127.0.0.2';
@@ -268,6 +268,9 @@ sub host_1 {
 " SEQ(SP=C5%GCD=1%ISR=C7%TI=Z%II=I%TS=8) ECN(R=Y%DF=Y%T=40%W=16D0%O=M5B4NNSNW2%CC=N%Q=) T1(R=Y%DF=Y%T=40%S=O%A=S+%F=AS%RD=0%Q=) T2(R=N) T3(R=Y%DF=Y%T=40%W=16A0%S=O%A=S+%F=AS%O=M5B4ST11NW2%RD=0%Q=) T4(R=Y%DF=Y%T=40%W=0%S=A%A=Z%F=R%O=%RD=0%Q=) T7(R=Y%DF=Y%T=40%W=0%S=Z%A=S+%F=AR%O=%RD=0%Q=) U1(R=Y%DF=N%T=40%TOS=C0%IPL=164%UN=0%RIPL=G%RID=G%RIPCK=G%RUCK=G%RUL=G%RUD=G) IE(R=Y%DFI=N%T=40%TOSI=S%CD=S%SI=S%DLI=S) ";
     isa_ok( $os = $host->os_sig(), 'Nmap::Parser::Host::OS', 'os_sig()' );
     is( $os->os_fingerprint(), $fingerprint, 'HOST1: os_fingerprint()' );
+
+    #TESTING NON-EXISTENT TRACE FOR HOST1
+    ok( !$host->all_trace_hops(), 'Host1 has no trace information' );
 }
 
 sub host_2 {
@@ -336,6 +339,11 @@ sub host_3 {
 
     isa_ok( $np->del_host(HOST3), 'Nmap::Parser::Host', 'DEL ' . HOST3 );
     is( $np->get_host(HOST3), undef, 'Testing deletion of ' . HOST3 );
+
+    #TESTING TRACE FOR HOST3
+    my $hops_count = $host->all_trace_hops();
+    is( $hops_count, 2, 'Host3 has trace information' );
+    is( $host->trace_error(), 'Error', 'Host3 trace is in error' );
 
 }
 
@@ -411,5 +419,22 @@ sub host_4 {
 
     isa_ok( $np->del_host(HOST4), 'Nmap::Parser::Host', 'DEL ' . HOST4 );
     is( $np->get_host(HOST4), undef, 'Testing deletion of ' . HOST4 );
+
+    #TESTING TRACE FOR HOST4
+    my @hops = $host->all_trace_hops();
+    ok( !$host->trace_error(), 'Host4 trace is not in error' );
+    is( $host->trace_port(), 80, 'Host4 trace port information' );
+    is( $host->trace_proto(), 'tcp', 'Host4 trace proto information' );
+    is( ( scalar @hops ), 3, 'Host4 trace size' );
+
+    is( $hops[0]->ttl(), 1, 'Host4 hop1 TTL' );
+    ok( !$hops[0]->rtt(), 'Host4 hop1 has no RTT' );
+    is( $hops[0]->ipaddr(), '192.168.1.1', 'Host4 hop1 IP address' );
+    ok( !$hops[0]->host(), 'Host4 hop1 has no hostname' );
+
+    is( $hops[2]->ttl(), 4, 'Host4 hop4 TTL' );
+    is( $hops[2]->rtt(), 26.48, 'Host4 hop4 RTT' );
+    is( $hops[2]->ipaddr(), '1.1.1.1', 'Host4 hop4 IP address' );
+    is( $hops[2]->host(), 'www.straton-it.fr', 'Host4 hop4 hostname' );
 
 }
