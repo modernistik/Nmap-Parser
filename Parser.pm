@@ -1,12 +1,15 @@
 package Nmap::Parser;
 
-#Author: Anthony G Persaud
 use strict;
 use XML::Twig;
 use Storable qw(dclone);
 use vars qw($VERSION %D);
 
-$VERSION = 1.19;
+#$Author$
+#$LastChangedDate$
+#$Rev$
+$VERSION = 1.20;
+
 
 sub new {
 
@@ -282,7 +285,8 @@ sub _host_tag_hdlr {
         $D{$$}{HOSTS}{$id}{tcptssequence} = __host_tcptssequence_tag_hdlr($tag);
         $D{$$}{HOSTS}{$id}{distance} =
           __host_distance_tag_hdlr($tag);    #returns simple value
-
+        $D{$$}{HOSTS}{$id}{trace}         = __host_trace_tag_hdlr($tag);
+        $D{$$}{HOSTS}{$id}{trace_error}   = __host_trace_error_tag_hdlr($tag);
     }
 
     #CREATE HOST OBJECT FOR USER
@@ -530,6 +534,54 @@ sub __host_distance_tag_hdlr {
     return $distance->{att}->{value};
 }
 
+sub __host_trace_tag_hdlr {
+    my $tag           = shift;
+    my $trace_tag     = $tag->first_child('trace');
+    my $trace_hashref = { hops => [], };
+
+    if ( defined $trace_tag ) {
+
+        my $proto = $trace_tag->{att}->{proto};
+        $trace_hashref->{proto} = $proto if defined $proto;
+
+        my $port = $trace_tag->{att}->{port};
+        $trace_hashref->{port} = $port if defined $port;
+
+        for my $hop_tag ( $trace_tag->children('hop') ) {
+
+            # Copy the known hop attributes, they will go in
+            # Nmap::Parser::Host::TraceHop
+            my %hop_data;
+            $hop_data{$_} = $hop_tag->{att}->{$_} for qw( ttl rtt ipaddr host );
+            delete $hop_data{rtt} if $hop_data{rtt} !~ /^[\d.]+$/;
+
+            push @{ $trace_hashref->{hops} }, \%hop_data;
+        }
+
+    }
+
+    return $trace_hashref;
+}
+
+sub __host_trace_error_tag_hdlr {
+    my $tag       = shift;
+    my $trace_tag = $tag->first_child('trace');
+
+    if ( defined $trace_tag ) {
+
+        my $error_tag = $trace_tag->first_child('error');
+        if ( defined $error_tag ) {
+            
+            # If an error happens, always provide a true value even if
+            # it doesn't contains a useful string
+            my $errorstr = $error_tag->{att}->{errorstr} || 1;
+            return $errorstr;
+        }
+    }
+
+    return;
+}
+
 #/*****************************************************************************/
 # NMAP::PARSER::SESSION
 #/*****************************************************************************/
@@ -625,11 +677,24 @@ sub extraports_state { return $_[0]->{ports}{extraports}{state}; }
 sub extraports_count { return $_[0]->{ports}{extraports}{count}; }
 sub distance         { return $_[0]->{distance}; }
 
+sub all_trace_hops {
+
+    my $self = shift;
+
+    return unless defined $self->{trace}->{hops};
+    return map { Nmap::Parser::Host::TraceHop->new( $_ ) }
+      @{ $self->{trace}->{hops} };
+}
+
+sub trace_port  { return $_[0]->{trace}->{port} }
+sub trace_proto { return $_[0]->{trace}->{proto} }
+sub trace_error { return $_[0]->{trace_error} }
+
 sub _del_port {
     my $self    = shift;
     my $proto   = pop;     #portid might be empty, so this goes first
     my @portids = @_;
-    @portids = grep {/\d+/ } @portids;
+    @portids = grep { $_ + 0 } @portids;
 
     unless ( scalar @portids ) {
         warn "[Nmap-Parser] No port number given to del_port()\n";
@@ -842,6 +907,39 @@ sub _get_info {
         $index = $self->{ $type . '_count' } - 1;
     }
     return $self->{ $type . '_' . $param }[$index];
+}
+
+#/*****************************************************************************/
+# NMAP::PARSER::HOST::TRACEHOP
+#/*****************************************************************************/
+
+package Nmap::Parser::Host::TraceHop;
+use vars qw($AUTOLOAD);
+
+sub new {
+    my $class = shift;
+    $class = ref($class) || $class;
+    my $self = shift || {};
+    bless( $self, $class );
+    return $self;
+}
+
+sub AUTOLOAD {
+    ( my $param = $AUTOLOAD ) =~ s{.*::}{}xms;
+    return if ( $param eq 'DESTROY' );
+    no strict 'refs';
+    $param = lc($param);
+
+    # Supported accessors:
+    my %subs;
+    @subs{ qw( ttl rtt ipaddr host ) } = 1;
+
+    if ( exists $subs{$param} ) {
+
+        *$AUTOLOAD = sub { $_[0]->{$param} };
+        goto &$AUTOLOAD;
+    }
+    else { die '[Nmap-Parser] method ->' . $param . "() not defined!\n"; }
 }
 
 1;
@@ -1161,6 +1259,30 @@ Return the vendor information of the MAC.
 
 Return the distance (in hops) of the target machine from the machine that performed the scan.
 
+=item B<trace_error()>
+
+Returns a true value (usually a meaningful error message) if the traceroute was
+performed but could not reach the destination. In this case C<all_trace_hops()>
+contains only the part of the path that could be determined.
+
+=item B<all_trace_hops()>
+
+Returns an array of Nmap::Parser::Host::TraceHop objects representing the path
+to the target host. This array may be empty if Nmap did not perform the
+traceroute for some reason (same network, for example).
+
+Some hops may be missing if Nmap could not figure out information about them.
+In this case there is a gap between the C<ttl()> values of consecutive returned
+hops. See also C<trace_error()>.
+
+=item B<trace_proto()>
+
+Returns the name of the protocol used to perform the traceroute.
+
+=item B<trace_port()>
+
+Returns the port used to perform the traceroute.
+
 =item B<os_sig()>
 
 Returns an Nmap::Parser::Host::OS object that can be used to obtain all the
@@ -1428,6 +1550,35 @@ index starts at 0.
 
 =back
 
+=head3 Nmap::Parser::Host::TraceHop
+
+This object represents a router on the IP path towards the destination or the
+destination itself. This is similar to what the C<traceroute> command outputs.
+
+Nmap::Parser::Host::TraceHop objects are obtained through the
+C<all_trace_hops()> and C<trace_hop()> Nmap::Parser::Host methods.
+
+=over 4
+
+=item B<ttl()>
+
+The Time To Live is the network distance of this hop.
+
+=item B<rtt()>
+
+The Round Trip Time is roughly equivalent to the "ping" time towards this hop.
+It is not always available (in which case it will be undef).
+
+=item B<ipaddr()>
+
+The known IP address of this hop.
+
+=item B<host()>
+
+The host name of this hop, if known.
+
+=back
+
 =head1 EXAMPLES
 
 I think some of us best learn from examples. These are a couple of examples to help
@@ -1562,11 +1713,12 @@ homepage can be found at: L<http://www.insecure.org/nmap/>.
 
 =head1 AUTHOR
 
-Anthony G Persaud L<http://anthonypersaud.com>
+Anthony G Persaud L<http://anthonypersaud.com> . Please see Changes file for a list of
+other contributors.
 
 =head1 COPYRIGHT
 
-Copyright (c) <2003-2009> <Anthony G. Persaud>
+Copyright (c) <2003-2010> <Anthony G. Persaud>
 
 MIT License
 

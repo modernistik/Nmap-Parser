@@ -7,8 +7,9 @@ Website:	http://anthonypersaud.com/
 
 Changes for 1.20
 	- Solved Issue 2: Host-specific start_time and end_time.
-	- Applied Patch provided by briandlong on retrieving start_time and 	end_time attributes for host.
+	- Applied Patch provided by briandlong on retrieving start_time and end_time attributes for host.
 	- Solved Issue 6: _del_port not removing port 0.
+	- Thomas Equeter submitted patch to support traceroute in nmap output.
 
 Changes for 1.19
 	- Added enhancement request by stevekatieterabyte for tcp_del_port and udp_del_port
