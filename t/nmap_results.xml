@@ -5,6 +5,7 @@
     <scaninfo type="udp" protocol="udp" numservices="1023" services="1-1023"/>
     <verbose level="3"/>
     <debugging level="0"/>
+    <prescript><script id="broadcast-dropbox-listener" output="&#xa;displayname  ip             port   version  host_int  namespaces&#xa;nosx         192.168.1.200  17500  1.8      31160369  10422330"/></prescript>
 <!-- this is available in 4.20+ -->
     <taskbegin task="ARP Ping Scan" time="1181604143"/>
     <taskend task="ARP Ping Scan" time="1181604144"/>
@@ -119,6 +120,7 @@
                 <state state="open"/>
                 <owner name="root"/>
                 <service name="ssh" product="OpenSSH" version="3.4p1" extrainfo="protocol 1.99" method="probed" conf="10"/>
+                <script id="ssh-hostkey" output="1024 e8:2e:5e:dd:03:6b:7c:0a:ed:bb:a0:b1:00:75:22:d4 (DSA)&#xa;2048 a9:dd:cb:b1:29:5e:ec:2c:98:22:3b:b4:34:20:a8:e1 (RSA)"/>
             </port>
             <port protocol="tcp" portid="25">
                 <state state="open"/>
@@ -139,6 +141,7 @@
                 <service name="rndc" method="table" conf="3" servicefp="SF-Port21-TCP:V=3.48%D=11/5%Time=3FA9032C%r(NULL,32,&quot;220\x20Oracle\x20Internet\x20File\x20System\x20FTP\x20Server\x20ready\r\n&quot;)%r(GenericLines,53,&quot;220\x20Oracle\x20Internet\x20File\x20System\x20FTP\x20Server\x20ready\r\n200\x20Connection\x20closed,\x20good\x20bye\r\n&quot;)%r(Help,57,&quot;220\x20Oracle\x20Internet\x20File\x20System\x20FTP\x20Server\x20ready\r\n500\x20HELP:\x20command\x20not\x20understood\.\r\n&quot;);"/>
             </port>
         </ports>
+        <hostscript><script id="nbstat" output="&#xa;  NetBIOS name: NAS, NetBIOS user: &lt;unknown&gt;, NetBIOS MAC: &lt;unknown&gt;&#xa;  Names&#xa;    NAS&lt;00&gt;              Flags: &lt;unique&gt;&lt;active&gt;&#xa;    NAS&lt;03&gt;              Flags: &lt;unique&gt;&lt;active&gt;&#xa;    NAS&lt;20&gt;              Flags: &lt;unique&gt;&lt;active&gt;&#xa;    WORKGROUP&lt;00&gt;        Flags: &lt;group&gt;&lt;active&gt;&#xa;    WORKGROUP&lt;1e&gt;        Flags: &lt;group&gt;&lt;active&gt;&#xa;"/></hostscript>
         <trace port="80" proto="tcp">
             <hop ttl="1" rtt="1.17" ipaddr="192.168.1.1"/>
             <hop ttl="2" rtt="26.86" ipaddr="88.181.1.1"/>
@@ -187,6 +190,7 @@
             <hop ttl="4" rtt="26.48" ipaddr="1.1.1.1" host="www.straton-it.fr"/>
         </trace>
     </host>
+    <postscript><script id="ssh-hostkey" output="Possible duplicate hosts&#xa;Key 2048 7b:b2:ce:9a:84:00:57:68:a5:52:dd:e8:0e:1b:b1:b7 (RSA) used by:&#xa;  192.168.1.107&#xa;  192.168.1.81&#xa;  192.168.1.124&#xa;Key 1024 84:7d:33:d3:9a:51:3a:2b:09:6b:49:bb:46:12:03:02 (DSA) used by:&#xa;  192.168.1.107&#xa;  192.168.1.81&#xa;  192.168.1.124"/></postscript>
     <runstats>
         <finished time="1057088900" timestr="Tue Jul  1 14:48:20 2003"/>
         <hosts up="1" down="0" total="1"/>

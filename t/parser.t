@@ -5,7 +5,7 @@ use blib;
 use Nmap::Parser;
 use File::Spec;
 use Cwd;
-use Test::More tests => 168;
+use Test::More tests => 173;
 
 use constant HOST1 => '127.0.0.1';
 use constant HOST2 => '127.0.0.2';
@@ -271,6 +271,9 @@ sub host_1 {
 
     #TESTING NON-EXISTENT TRACE FOR HOST1
     ok( !$host->all_trace_hops(), 'Host1 has no trace information' );
+
+    #TESTING NON-EXISTENT HOSTSCRIPT FOR HOST1
+    ok( !$host->hostscripts(), 'Host1 has no hostscript information' );
 }
 
 sub host_2 {
@@ -300,6 +303,11 @@ sub host_3 {
     is( $svc->product,   'OpenSSH',       'TCP Service: product' );
     is( $svc->version,   '3.4p1',         'TCP Service: version' );
     is( $svc->extrainfo, 'protocol 1.99', 'TCP Service: extrainfo' );
+    is_deeply( [ $svc->scripts() ], [ 'ssh-hostkey' ], 'Port has scripts' );
+    {
+        my $output = $svc->scripts('ssh-hostkey');
+        like( $output, qr/^1024 e8:2.*RSA\)$/s, 'Script output ok');
+    }
 
     isa_ok(
         $svc = $host->udp_service(80),
@@ -344,6 +352,17 @@ sub host_3 {
     my $hops_count = $host->all_trace_hops();
     is( $hops_count, 2, 'Host3 has trace information' );
     is( $host->trace_error(), 'Error', 'Host3 trace is in error' );
+
+    #TESTING HOSTSCRIPT FOR HOST3
+    is_deeply(
+        [ $host->hostscripts() ],
+        [ 'nbstat' ],
+        'Host3 has one hostscript' );
+    {
+        my $output = $host->hostscripts('nbstat');
+        is( substr($output,0,16), "\n  NetBIOS name:",
+            'Host3 hostscript correct' );
+    }
 
 }
 
