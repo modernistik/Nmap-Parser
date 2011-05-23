@@ -50,9 +50,9 @@ sub parser_test {
     #TESTING IPV4_SORT
     my @hosts = ( HOST3, HOST1, HOST4, HOST2 );
     is_deeply(
-        [ $np->ipv4_sort(@hosts) ],
+        [ $np->addr_sort(@hosts) ],
         [ HOST1, HOST2, HOST3, HOST4 ],
-        'Testing ipv4_sort'
+        'Testing addr_sort'
     );
 
     #TESTING ALL_HOSTS()

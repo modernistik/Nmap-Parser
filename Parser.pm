@@ -3,7 +3,6 @@ package Nmap::Parser;
 use strict;
 use XML::Twig;
 use Storable qw(dclone);
-use Socket qw(inet_aton inet_ntoa);
 use vars qw($VERSION %D);
 
 #$Author$
@@ -147,14 +146,25 @@ sub purge {
     return $self;
 }
 
-sub ipv4_sort {
+sub addr_sort {
     my $self = shift if ref $_[0];
 
     return (
-        map { inet_ntoa($_);}
+        map { unpack("x16A*", $_) }
             sort { $a cmp $b }
-            map { inet_aton($_); } @_
-    );
+            map {
+                my @vals;
+                if( /:/ ) { #IPv6
+                    @vals = split /:/;
+                    @vals = map { $_ eq '' ? (0) x (8-$#vals) : hex } @vals
+                } else { #IPv4
+                    my @v4 = split /\./;
+                    # Sort as IPv4-mapped IPv6, per RFC 4291 Section 2.5.5.2
+                    @vals = ( (0) x 5, 0xffff, map { 256*$v4[$_] + $v4[$_+1] } (0,2) );
+                }
+                pack("n8A*", @vals, $_)
+            } @_
+        );
 }
 
 #MAIN SCAN INFORMATION
@@ -197,12 +207,12 @@ sub get_ips {
     my $self = shift;
     my $status = shift || '';
 
-    return $self->ipv4_sort( keys %{ $self->{HOSTS} } ) if ( $status eq '' );
+    return $self->addr_sort( keys %{ $self->{HOSTS} } ) if ( $status eq '' );
 
     my @hosts =
       grep { $self->{HOSTS}{$_}{status} eq $status }
       ( keys %{ $self->{HOSTS} } );
-    return $self->ipv4_sort(@hosts);
+    return $self->addr_sort(@hosts);
 
 }
 
@@ -1219,14 +1229,13 @@ can be any of the following: C<(up|down|unknown|skipped)>
 =item B<get_ips($status)>
 
 Returns the list of IP addresses that were scanned in this nmap session. They are
-sorted using ipv4_sort. If there are IPv6 addresses, or mixed, it might not be
-in correct sorted order. If the optional status is given, it will only return
+sorted using addr_sort. If the optional status is given, it will only return
 those IP addresses that match that status. The status can be any of the
 following: C<(up|down|unknown|skipped)>
 
-=item B<ipv4_sort(@ips)>
+=item B<addr_sort(@ips)>
 
-This function takes a list of IPv4 addresses and returns the correctly sorted
+This function takes a list of IP addresses and returns the correctly sorted
 version of the list.
 
 =back
