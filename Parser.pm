@@ -24,6 +24,8 @@ sub new {
 
         twig_roots => {
             scaninfo => \&_scaninfo_tag_hdlr,
+            prescript => \&_prescript_tag_hdlr,
+            postscript => \&_postscript_tag_hdlr,
             finished => \&_finished_tag_hdlr,
             host     => \&_host_tag_hdlr
         },
@@ -233,6 +235,28 @@ sub _scaninfo_tag_hdlr {
         $D{$$}{SESSION}{type}{$type}        = $proto;
         $D{$$}{SESSION}{numservices}{$type} = $numservices;
     }
+    $twig->purge;
+}
+
+sub _prescript_tag_hdlr {
+    my ( $twig, $tag ) = @_;
+    my $scripts_hashref;
+    for my $script ( $tag->children('script') ) {
+        chomp($scripts_hashref->{ $script->{att}->{id} } =
+          $script->{att}->{output});
+    }
+    $D{$$}{SESSION}{prescript} = $scripts_hashref;
+    $twig->purge;
+}
+
+sub _postscript_tag_hdlr {
+    my ( $twig, $tag ) = @_;
+    my $scripts_hashref;
+    for my $script ( $tag->children('script') ) {
+        chomp($scripts_hashref->{ $script->{att}->{id} } =
+          $script->{att}->{output});
+    }
+    $D{$$}{SESSION}{postscript} = $scripts_hashref;
     $twig->purge;
 }
 
@@ -654,6 +678,28 @@ sub scan_types {
       if ( ref( $_[0]->{type} ) eq 'HASH' );
 }
 sub scan_type_proto { return $_[1] ? $_[0]->{type}{ $_[1] } : undef; }
+
+sub prescripts {
+    my $self = shift;
+    my $id = shift;
+    unless ( defined $id ) {
+        return sort keys %{ $self->{prescript} };
+    }
+    else {
+        return $self->{prescript}{$id};
+    }
+}
+
+sub postscripts {
+    my $self = shift;
+    my $id = shift;
+    unless ( defined $id ) {
+        return sort keys %{ $self->{postscript} };
+    }
+    else {
+        return $self->{postscript}{$id};
+    }
+}
 
 #/*****************************************************************************/
 # NMAP::PARSER::HOST

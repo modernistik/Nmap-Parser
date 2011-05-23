@@ -5,7 +5,7 @@ use blib;
 use Nmap::Parser;
 use File::Spec;
 use Cwd;
-use Test::More tests => 173;
+use Test::More tests => 177;
 
 use constant HOST1 => '127.0.0.1';
 use constant HOST2 => '127.0.0.2';
@@ -122,6 +122,21 @@ sub session_test {
     is( $session->scan_type_proto('udp'),
         'udp', 'Session: scan_type_proto(udp)' );
 
+    is_deeply(
+        [ $session->prescripts ],
+        [ 'broadcast-dropbox-listener' ],
+        'Session has prescripts' );
+    like( $session->prescripts('broadcast-dropbox-listener'),
+        qr/\ndisplayname .* 10422330$/s,
+        'Prescript output correct' );
+
+    is_deeply(
+        [ $session->postscripts ],
+        [ 'ssh-hostkey' ],
+        'Session has postscripts' );
+    like( $session->postscripts('ssh-hostkey'),
+        qr/Possible .* 192.168.1.124$/s,
+        'Postscript output correct' );
 }
 
 sub host_1 {
