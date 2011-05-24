@@ -364,7 +364,7 @@ L<http://www.cpanforum.com/dist/Nmap-Parser>
 =head2 Bug Reports
 
 Please submit any bugs to:
-L<http://code.google.com/p/nmap-parser/issues/list>
+L<https://github.com/apersaud/Nmap-Parser/issues>
 
 B<Please make sure that you submit the xml-output file of the scan which you are having
 trouble.> This can be done by running your scan with the I<-oX filename.xml> nmap switch.
@@ -373,14 +373,14 @@ Please remove any important IP addresses for security reasons.
 =head2 Feature Requests
 
 Please submit any requests to:
-L<http://code.google.com/p/nmap-parser/issues/list>
+L<https://github.com/apersaud/Nmap-Parser/issues>
 
 
 =head1 SEE ALSO
 
 L<Nmap::Parser>
 
-The Nmap::Parser page can be found at: L<http://anthonypersaud.com/category/nmap-parser>.
+The Nmap::Parser page can be found at: L<https://github.com/apersaud/Nmap-Parser>.
 It contains the latest developments on the module. The nmap security scanner
 homepage can be found at: L<http://www.insecure.org/nmap/>.
 
