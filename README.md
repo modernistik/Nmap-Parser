@@ -12,19 +12,19 @@ Latest version: [https://github.com/apersaud/Nmap-Parser](https://github.com/ape
 Website: [http://anthonypersaud.com/](http://anthonypersaud.com)
 
 
-MANUAL INSTALL
+Manual Install
 =================================================================
 
 Download the file and unpack. This is usually done by:
 
-   tar zxvf Nmap-Parser-x.xx.tar.gz
+    tar zxvf Nmap-Parser-x.xx.tar.gz
 
 Where x.xx is the version number. Next change into the newly created directory. To install this module type the following:
 
-   perl Makefile.PL
-   make
-   make test
-   make install
+    perl Makefile.PL
+    make
+    make test
+    make install
 
 If you would like to install Nmap-Parser in a different directory (or if you do
 not have root access use `perl Makefile.PL PREFIX=/install/path`, where
@@ -32,7 +32,7 @@ not have root access use `perl Makefile.PL PREFIX=/install/path`, where
 that you should then use the "use lib '/install/path'" in your scripts.
 
 
-ACTIVESTATE PERL (Perl Package Manager) - MSWin32
+ActiveState Perl (Perl Package Manager) - MSWin32
 =================================================================
 
 Run this in the command prompt:
@@ -41,7 +41,7 @@ Run this in the command prompt:
 
 This should contact the ActiveState respository, download the file and install it automagically.
 
-CPAN AUTOMATIC INSTALL (If you are missing dependencies)
+CPAN Install (If you are missing dependencies)
 =================================================================
 
 Run this in the command prompt to install directly from CPAN (may need root priviledges):
@@ -49,7 +49,7 @@ Run this in the command prompt to install directly from CPAN (may need root priv
 	perl -MCPAN -e 'install Nmap::Parser'
 	
 
-DEPENDENCIES
+Dependencies
 =================================================================
 
 This module requires these other modules and libraries:
@@ -63,14 +63,10 @@ version of nmap supports the xml output that this module can parse. So, you do
 not really need the executable, but the xml output that you will be parsing
 (or able to parse), must be from this version onward.
 
-
-FOR CHANGE INFORMATION SEE THE "CHANGES" FILE
----------------------------------------
-
-COPYRIGHT AND LICENCE
+Copyright and License
 =================================================================
 
-Copyright (C) 2003-2008 Anthony G Persaud L<http://anthonypersaud.com>
+Copyright (C) 2003-2011 Anthony G Persaud L<http://anthonypersaud.com>
 
 MIT License
 
