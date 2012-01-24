@@ -752,7 +752,7 @@ sub hostname {
     return $self->{hostnames}[$index] if ( scalar @{ $self->{hostnames} } );
 }
 
-sub all_hostnames    { return @{ $_[0]->{hostnames} }; }
+sub all_hostnames    { return @{ $_[0]->{hostnames} || [] }; }
 sub extraports_state { return $_[0]->{ports}{extraports}{state}; }
 sub extraports_count { return $_[0]->{ports}{extraports}{count}; }
 sub distance         { return $_[0]->{distance}; }
