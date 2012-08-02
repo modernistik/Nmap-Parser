@@ -5,6 +5,9 @@ Latest version: http://apersaud.github.com/Nmap-Parser/
 
 Website:	http://anthonypersaud.com/
 
+Changes for 1.22
+    - Allow osclass elements within osmatch, Nmap XML format changed in 6.00
+
 Changes for 1.21
     - Added support for hostscript and script tags
     - Changed ipv4_sort() to use a 10x faster sort method
