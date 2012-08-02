@@ -5,7 +5,7 @@ use XML::Twig;
 use Storable qw(dclone);
 use vars qw($VERSION %D);
 
-$VERSION = 1.21;
+$VERSION = 1.22;
 
 
 sub new {
@@ -472,6 +472,7 @@ sub __host_os_tag_hdlr {
     my $portused_tag;
     my $os_fingerprint;
 
+    #if( $D{$$}{SESSION}{xml_version} eq "1.04")
     if ( defined $os_tag ) {
 
         #get the open port used to match os
@@ -492,17 +493,30 @@ sub __host_os_tag_hdlr {
 
         #This will go in Nmap::Parser::Host::OS
         my $osmatch_index = 0;
+        my $osclass_index = 0;
         for my $osmatch ( $os_tag->children('osmatch') ) {
             $os_hashref->{osmatch_name}[$osmatch_index] =
               $osmatch->{att}->{name};
             $os_hashref->{osmatch_name_accuracy}[$osmatch_index] =
               $osmatch->{att}->{accuracy};
             $osmatch_index++;
+            for my $osclass ( $osmatch->children('osclass') ) {
+                $os_hashref->{osclass_osfamily}[$osclass_index] =
+                  $osclass->{att}->{osfamily};
+                $os_hashref->{osclass_osgen}[$osclass_index] =
+                  $osclass->{att}->{osgen};
+                $os_hashref->{osclass_vendor}[$osclass_index] =
+                  $osclass->{att}->{vendor};
+                $os_hashref->{osclass_type}[$osclass_index] =
+                  $osclass->{att}->{type};
+                $os_hashref->{osclass_class_accuracy}[$osclass_index] =
+                  $osclass->{att}->{accuracy};
+                $osclass_index++;
+            }
         }
         $os_hashref->{'osmatch_count'} = $osmatch_index;
 
         #parse osclass tags
-        my $osclass_index = 0;
         for my $osclass ( $os_tag->children('osclass') ) {
             $os_hashref->{osclass_osfamily}[$osclass_index] =
               $osclass->{att}->{osfamily};
