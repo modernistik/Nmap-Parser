@@ -110,7 +110,7 @@ sub session_test {
     is( $session->finish_time(), 1057088900, 'Session: finish_time' );
     is( $session->time_str(), 'Tue Jul  1 14:48:20 2003', 'Session: time_str' );
     is( $session->nmap_version(), '3.80', 'Session: nmap_version' );
-    is( $session->xml_version(),  '1.01', 'Session: xml_version' );
+    is( $session->xml_version(),  '1.04', 'Session: xml_version' );
     is(
         $session->scan_args(),
         'nmap -v -v -v -oX test.xml -O -sTUR -p 1-1023 127.0.0.[1-4]',
@@ -126,7 +126,7 @@ sub session_test {
         [ $session->prescripts ],
         [ 'broadcast-dropbox-listener' ],
         'Session has prescripts' );
-    like( $session->prescripts('broadcast-dropbox-listener'),
+    like( $session->prescripts('broadcast-dropbox-listener')->{output},
         qr/\ndisplayname .* 10422330$/s,
         'Prescript output correct' );
 
@@ -134,7 +134,7 @@ sub session_test {
         [ $session->postscripts ],
         [ 'ssh-hostkey' ],
         'Session has postscripts' );
-    like( $session->postscripts('ssh-hostkey'),
+    like( $session->postscripts('ssh-hostkey')->{output},
         qr/Possible .* 192.168.1.124$/s,
         'Postscript output correct' );
 }
@@ -320,8 +320,8 @@ sub host_3 {
     is( $svc->extrainfo, 'protocol 1.99', 'TCP Service: extrainfo' );
     is_deeply( [ $svc->scripts() ], [ 'ssh-hostkey' ], 'Port has scripts' );
     {
-        my $output = $svc->scripts('ssh-hostkey');
-        like( $output, qr/^1024 e8:2.*RSA\)$/s, 'Script output ok');
+        my $output = $svc->scripts('ssh-hostkey')->{output};
+        like( $output, qr/^1024 .* \(RSA\)$/s, 'Script output ok');
     }
 
     isa_ok(
@@ -374,7 +374,7 @@ sub host_3 {
         [ 'nbstat' ],
         'Host3 has one hostscript' );
     {
-        my $output = $host->hostscripts('nbstat');
+        my $output = $host->hostscripts('nbstat')->{output};
         is( substr($output,0,16), "\n  NetBIOS name:",
             'Host3 hostscript correct' );
     }
