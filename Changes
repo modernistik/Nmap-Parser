@@ -1,11 +1,13 @@
 Revision history for Perl extension Nmap::Parser.
 
-Latest version: http://apersaud.github.com/Nmap-Parser/
+Bleeding Edge version: http://apersaud.github.com/Nmap-Parser/
 		http://search.cpan.org/~apersaud/Nmap-Parser/
 
-Website:	http://anthonypersaud.com/
+For a full list of changes and contributors see: https://github.com/apersaud/Nmap-Parser/commits/master
 
-Changes for 1.22
+Changes for 1.30
+    - Merged features of pull request #6 (bonsaiviking)
+        https://github.com/apersaud/Nmap-Parser/commit/7ccf752af
     - Allow osclass elements within osmatch, Nmap XML format changed in 6.00
 
 Changes for 1.21
