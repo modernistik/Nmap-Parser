@@ -5,7 +5,7 @@ use XML::Twig;
 use Storable qw(dclone);
 use vars qw($VERSION %D);
 
-$VERSION = 1.21;
+$VERSION = 1.22;
 
 
 sub new {
@@ -249,8 +249,8 @@ sub _prescript_tag_hdlr {
     my ( $twig, $tag ) = @_;
     my $scripts_hashref;
     for my $script ( $tag->children('script') ) {
-        chomp($scripts_hashref->{ $script->{att}->{id} } =
-          $script->{att}->{output});
+        $scripts_hashref->{ $script->{att}->{id} } =
+            __script_tag_hdlr( $script );
     }
     $D{$$}{SESSION}{prescript} = $scripts_hashref;
     $twig->purge;
@@ -260,8 +260,8 @@ sub _postscript_tag_hdlr {
     my ( $twig, $tag ) = @_;
     my $scripts_hashref;
     for my $script ( $tag->children('script') ) {
-        chomp($scripts_hashref->{ $script->{att}->{id} } =
-          $script->{att}->{output});
+        $scripts_hashref->{ $script->{att}->{id} } =
+          __script_tag_hdlr( $script );
     }
     $D{$$}{SESSION}{postscript} = $scripts_hashref;
     $twig->purge;
@@ -458,8 +458,8 @@ sub __host_script_tag_hdlr {
     my $script_hashref;
 
     for ( $tag->children('script') ) {
-        chomp($script_hashref->{ $_->{att}->{id} } =
-            $_->{att}->{output});
+        $script_hashref->{ $_->{att}->{id} } =
+         __script_tag_hdlr($_);
     }
 
     return $script_hashref;
@@ -472,6 +472,7 @@ sub __host_os_tag_hdlr {
     my $portused_tag;
     my $os_fingerprint;
 
+    #if( $D{$$}{SESSION}{xml_version} eq "1.04")
     if ( defined $os_tag ) {
 
         #get the open port used to match os
@@ -492,17 +493,30 @@ sub __host_os_tag_hdlr {
 
         #This will go in Nmap::Parser::Host::OS
         my $osmatch_index = 0;
+        my $osclass_index = 0;
         for my $osmatch ( $os_tag->children('osmatch') ) {
             $os_hashref->{osmatch_name}[$osmatch_index] =
               $osmatch->{att}->{name};
             $os_hashref->{osmatch_name_accuracy}[$osmatch_index] =
               $osmatch->{att}->{accuracy};
             $osmatch_index++;
+            for my $osclass ( $osmatch->children('osclass') ) {
+                $os_hashref->{osclass_osfamily}[$osclass_index] =
+                  $osclass->{att}->{osfamily};
+                $os_hashref->{osclass_osgen}[$osclass_index] =
+                  $osclass->{att}->{osgen};
+                $os_hashref->{osclass_vendor}[$osclass_index] =
+                  $osclass->{att}->{vendor};
+                $os_hashref->{osclass_type}[$osclass_index] =
+                  $osclass->{att}->{type};
+                $os_hashref->{osclass_class_accuracy}[$osclass_index] =
+                  $osclass->{att}->{accuracy};
+                $osclass_index++;
+            }
         }
         $os_hashref->{'osmatch_count'} = $osmatch_index;
 
         #parse osclass tags
-        my $osclass_index = 0;
         for my $osclass ( $os_tag->children('osclass') ) {
             $os_hashref->{osclass_osfamily}[$osclass_index] =
               $osclass->{att}->{osfamily};
@@ -579,8 +593,8 @@ sub __host_hostscript_tag_hdlr {
     my $scripts_hashref;
     return undef unless ($scripts);
     for my $script ( $scripts->children('script') ) {
-        chomp($scripts_hashref->{ $script->{att}->{id} } =
-          $script->{att}->{output});
+        $scripts_hashref->{ $script->{att}->{id} } =
+            __script_tag_hdlr( $script );
     }
     return $scripts_hashref;
 }
@@ -638,6 +652,52 @@ sub __host_trace_error_tag_hdlr {
     }
 
     return;
+}
+
+sub __script_tag_hdlr {
+    my $tag = shift;
+    my $script_hashref = {
+        output => $tag->{att}->{output}
+    };
+    chomp %$script_hashref;
+    if ( not $tag->is_empty()) {
+        $script_hashref->{contents} = __script_table($tag);
+    }
+    return $script_hashref;
+}
+
+sub __script_table {
+    my $tag = shift;
+    my ($ref, $subref);
+    my $fc = $tag->first_child();
+    if ($fc) {
+        if ($fc->is_text) {
+            $ref = $fc->text;
+        }
+        else {
+            if ($fc->{att}->{key}) {
+                $ref = {};
+                $subref = sub {
+                    $ref->{$_->{att}->{key}} = shift;
+                };
+            }
+            else {
+                $ref = [];
+                $subref = sub {
+                    push @$ref, shift;
+                };
+            }
+            for ($tag->children()) {
+                if ($_->tag() eq "table") {
+                    $subref->(__script_table( $_ ));
+                }
+                else {
+                    $subref->($_->text);
+                }
+            }
+        }
+    }
+    return $ref
 }
 
 #/*****************************************************************************/
@@ -798,13 +858,16 @@ sub _del_port {
 sub _get_ports {
     my $self          = shift;
     my $proto         = pop;          #param might be empty, so this goes first
-    my $state         = lc(shift);    #open, filtered, closed or any combination
+    my $state         = shift;    #open, filtered, closed or any combination
     my @matched_ports = ();
 
-    #if $state eq '', then tcp_ports or udp_ports was called for all ports
+    #if $state is undef, then tcp_ports or udp_ports was called for all ports
     #therefore, only return the keys of all ports found
-    if ( $state eq '' ) {
+    if ( not defined $state ) {
         return sort { $a <=> $b } ( keys %{ $self->{ports}{$proto} } );
+    }
+    else {
+        $state = lc($state)
     }
 
 #the port parameter can be set to either any of these also 'open|filtered'
@@ -1294,6 +1357,28 @@ Returns the human readable format of the finish time.
 
 Returns the version of nmap xml file.
 
+=item B<prescripts()>
+
+=item B<prescripts($name)>
+
+A basic call to prescripts() returns a list of the names of the NSE scripts
+run in the pre-scanning phase. If C<$name> is given, it returns the text output of the
+a reference to a hash with "output" and "content" keys for the
+script with that name, or undef if that script was not run.
+The value of the "output" key is the text output of the script. The value of the
+"content" key is a data structure based on the XML output of the NSE script.
+
+=item B<postscripts()>
+
+=item B<postscripts($name)>
+
+A basic call to postscripts() returns a list of the names of the NSE scripts
+run in the post-scaning phase. If C<$name> is given, it returns the text output of the
+a reference to a hash with "output" and "content" keys for the
+script with that name, or undef if that script was not run.
+The value of the "output" key is the text output of the script. The value of the
+"content" key is a data structure based on the XML output of the NSE script.
+
 =back
 
 =head2 Nmap::Parser::Host
@@ -1432,8 +1517,11 @@ when the scan was performed.
 =item B<hostscripts($name)>
 
 A basic call to hostscripts() returns a list of the names of the host scripts
-run. If C<$name> is given, it returns the text output of the script with that
-name, or undef if that script was not run.
+run. If C<$name> is given, it returns the text output of the
+a reference to a hash with "output" and "content" keys for the
+script with that name, or undef if that script was not run.
+The value of the "output" key is the text output of the script. The value of the
+"content" key is a data structure based on the XML output of the NSE script.
 
 =item B<tcp_ports()>
 
@@ -1564,9 +1652,12 @@ Returns the version of the given product of the running service.
 
 =item B<scripts($name)>
 
-A basic call to scripts() returns a list of the names of the scripts
-run for this port. If C<$name> is given, it returns the text output of the
+A basic call to scripts() returns a list of the names of the NSE scripts
+run for this port. If C<$name> is given, it returns
+a reference to a hash with "output" and "content" keys for the
 script with that name, or undef if that script was not run.
+The value of the "output" key is the text output of the script. The value of the
+"content" key is a data structure based on the XML output of the NSE script.
 
 =back
 
