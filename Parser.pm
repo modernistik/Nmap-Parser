@@ -2,10 +2,8 @@ package Nmap::Parser;
 
 use strict;
 use XML::Twig;
-use Storable qw(dclone);
-use vars qw($VERSION %D);
 
-$VERSION = 1.30;
+our $VERSION = 1.30;
 
 
 sub new {
@@ -13,17 +11,15 @@ sub new {
     my ( $class, $self ) = shift;
     $class = ref($class) || $class;
 
-    %{ $self->{HOSTS} } = %{ $self->{SESSION} } = ();
-
     $self->{twig} = new XML::Twig(
-        start_tag_handlers => { nmaprun => \&_nmaprun_start_tag_hdlr },
+        start_tag_handlers => { nmaprun => sub {$self->_nmaprun_start_tag_hdlr(@_)} },
 
         twig_roots => {
-            scaninfo => \&_scaninfo_tag_hdlr,
-            prescript => \&_prescript_tag_hdlr,
-            postscript => \&_postscript_tag_hdlr,
-            finished => \&_finished_tag_hdlr,
-            host     => \&_host_tag_hdlr
+            scaninfo => sub {$self->_scaninfo_tag_hdlr(@_)},
+            prescript => sub {$self->_prescript_tag_hdlr(@_)},
+            postscript => sub {$self->_postscript_tag_hdlr(@_)},
+            finished => sub {$self->_finished_tag_hdlr(@_)},
+            host     => sub {$self->_host_tag_hdlr(@_)},
         },
         ignore_elts => {
             addport      => 1,
@@ -46,18 +42,6 @@ sub new {
 
 #Safe parse and parsefile will return $@ which will contain the error
 #that occured if the parsing failed (it might be empty when no error occurred)
-sub _init {
-    my $self = shift;
-    $D{callback} = $self->{callback};
-}
-
-sub _clean {
-    my $self = shift;
-    $self->{SESSION} = dclone( $D{$$}{SESSION} ) if ( $D{$$}{SESSION} );
-    $self->{HOSTS}   = dclone( $D{$$}{HOSTS} )   if ( $D{$$}{HOSTS} );
-    delete $D{$$};
-    delete $D{callback};
-}
 
 sub callback {
     my $self     = shift;
@@ -74,24 +58,26 @@ sub callback {
     return $self->{callback}{is_registered};
 }
 
-sub parse {
+sub _parse {
+    my $type = shift;
     my $self = shift;
-    $self->_init();
-    $self->{twig}->safe_parse(@_);
+    $self->{HOSTS} = undef;
+    $self->{SESSION} = undef;
+    {
+        file => sub { $self->{twig}->safe_parsefile(@_); },
+        string => sub { $self->{twig}->safe_parse(@_); },
+    }->{$type}->(@_);
     if ($@) { die $@; }
-    $self->_clean();
     $self->purge;
     return $self;
 }
 
+sub parse {
+    return _parse('string', @_);
+}
+
 sub parsefile {
-    my $self = shift;
-    $self->_init();
-    $self->{twig}->safe_parsefile(@_);
-    if ($@) { die $@; }
-    $self->_clean();
-    $self->purge;
-    return $self;
+    return _parse('file', @_);
 }
 
 sub parsescan {
@@ -107,7 +93,6 @@ sub parsescan {
     }
 
     my $cmd;
-    $self->_init();
 
 #if output file is defined, point it to a localfile then call parsefile instead.
     if ( defined( $self->{cache_file} ) ) {
@@ -126,10 +111,7 @@ sub parsescan {
         close $FH;
     }
 
-    $self->_clean();
-    $self->purge;
     return $self;
-
 }
 
 sub cache_scan {
@@ -219,64 +201,64 @@ sub get_ips {
 
 sub _nmaprun_start_tag_hdlr {
 
-    my ( $twig, $tag ) = @_;
+    my ($self, $twig, $tag ) = @_;
 
-    $D{$$}{SESSION}{start_time}   = $tag->{att}->{start};
-    $D{$$}{SESSION}{nmap_version} = $tag->{att}->{version};
-    $D{$$}{SESSION}{start_str}    = $tag->{att}->{startstr};
-    $D{$$}{SESSION}{xml_version}  = $tag->{att}->{xmloutputversion};
-    $D{$$}{SESSION}{scan_args}    = $tag->{att}->{args};
-    $D{$$}{SESSION} = Nmap::Parser::Session->new( $D{$$}{SESSION} );
+    $self->{SESSION}{start_time}   = $tag->{att}->{start};
+    $self->{SESSION}{nmap_version} = $tag->{att}->{version};
+    $self->{SESSION}{start_str}    = $tag->{att}->{startstr};
+    $self->{SESSION}{xml_version}  = $tag->{att}->{xmloutputversion};
+    $self->{SESSION}{scan_args}    = $tag->{att}->{args};
+    $self->{SESSION} = Nmap::Parser::Session->new( $self->{SESSION} );
 
     $twig->purge;
 
 }
 
 sub _scaninfo_tag_hdlr {
-    my ( $twig, $tag ) = @_;
+    my ( $self, $twig, $tag ) = @_;
     my $type        = $tag->{att}->{type};
     my $proto       = $tag->{att}->{protocol};
     my $numservices = $tag->{att}->{numservices};
 
     if ( defined($type) ) {    #there can be more than one type in one scan
-        $D{$$}{SESSION}{type}{$type}        = $proto;
-        $D{$$}{SESSION}{numservices}{$type} = $numservices;
+        $self->{SESSION}{type}{$type}        = $proto;
+        $self->{SESSION}{numservices}{$type} = $numservices;
     }
     $twig->purge;
 }
 
 sub _prescript_tag_hdlr {
-    my ( $twig, $tag ) = @_;
+    my ($self, $twig, $tag ) = @_;
     my $scripts_hashref;
     for my $script ( $tag->children('script') ) {
         $scripts_hashref->{ $script->{att}->{id} } =
             __script_tag_hdlr( $script );
     }
-    $D{$$}{SESSION}{prescript} = $scripts_hashref;
+    $self->{SESSION}{prescript} = $scripts_hashref;
     $twig->purge;
 }
 
 sub _postscript_tag_hdlr {
-    my ( $twig, $tag ) = @_;
+    my ($self, $twig, $tag ) = @_;
     my $scripts_hashref;
     for my $script ( $tag->children('script') ) {
         $scripts_hashref->{ $script->{att}->{id} } =
           __script_tag_hdlr( $script );
     }
-    $D{$$}{SESSION}{postscript} = $scripts_hashref;
+    $self->{SESSION}{postscript} = $scripts_hashref;
     $twig->purge;
 }
 
 sub _finished_tag_hdlr {
-    my ( $twig, $tag ) = @_;
-    $D{$$}{SESSION}{finish_time} = $tag->{att}->{time};
-    $D{$$}{SESSION}{time_str}    = $tag->{att}->{timestr};
+    my ($self, $twig, $tag ) = @_;
+    $self->{SESSION}{finish_time} = $tag->{att}->{time};
+    $self->{SESSION}{time_str}    = $tag->{att}->{timestr};
     $twig->purge;
 }
 
 #parses all the host information in one swoop (calling __host_*_tag_hdlrs)
 sub _host_tag_hdlr {
-    my ( $twig, $tag ) = @_;
+    my ($self, $twig, $tag ) = @_;
     my $id = undef;
 
     return undef unless ( defined $tag );
@@ -291,38 +273,38 @@ sub _host_tag_hdlr {
       || $addr_hashref->{ipv6}
       || $addr_hashref->{mac};    #worstcase use MAC
 
-    $D{$$}{HOSTS}{$id}{addrs} = $addr_hashref;
+    $self->{HOSTS}{$id}{addrs} = $addr_hashref;
 
     return undef unless ( defined($id) || $id ne '' );
 
     #GET HOSTNAMES
-    $D{$$}{HOSTS}{$id}{hostnames} = __host_hostnames_tag_hdlr($tag);
+    $self->{HOSTS}{$id}{hostnames} = __host_hostnames_tag_hdlr($tag);
 
     #GET STATUS
-    $D{$$}{HOSTS}{$id}{status} = $tag->first_child('status')->{att}->{state};
+    $self->{HOSTS}{$id}{status} = $tag->first_child('status')->{att}->{state};
 
     #CONTINUE PROCESSING IF STATUS IS UP - OTHERWISE NO MORE XML
-    if ( lc( $D{$$}{HOSTS}{$id}{status} ) eq 'up' ) {
+    if ( lc( $self->{HOSTS}{$id}{status} ) eq 'up' ) {
 
-        $D{$$}{HOSTS}{$id}{ports}         = __host_port_tag_hdlr($tag);
-        $D{$$}{HOSTS}{$id}{os}            = __host_os_tag_hdlr($tag);
-        $D{$$}{HOSTS}{$id}{uptime}        = __host_uptime_tag_hdlr($tag);
-        $D{$$}{HOSTS}{$id}{tcpsequence}   = __host_tcpsequence_tag_hdlr($tag);
-        $D{$$}{HOSTS}{$id}{ipidsequence}  = __host_ipidsequence_tag_hdlr($tag);
-        $D{$$}{HOSTS}{$id}{tcptssequence} = __host_tcptssequence_tag_hdlr($tag);
-        $D{$$}{HOSTS}{$id}{hostscript} = __host_hostscript_tag_hdlr($tag);
-        $D{$$}{HOSTS}{$id}{distance} =
+        $self->{HOSTS}{$id}{ports}         = __host_port_tag_hdlr($tag);
+        $self->{HOSTS}{$id}{os}            = __host_os_tag_hdlr($tag);
+        $self->{HOSTS}{$id}{uptime}        = __host_uptime_tag_hdlr($tag);
+        $self->{HOSTS}{$id}{tcpsequence}   = __host_tcpsequence_tag_hdlr($tag);
+        $self->{HOSTS}{$id}{ipidsequence}  = __host_ipidsequence_tag_hdlr($tag);
+        $self->{HOSTS}{$id}{tcptssequence} = __host_tcptssequence_tag_hdlr($tag);
+        $self->{HOSTS}{$id}{hostscript} = __host_hostscript_tag_hdlr($tag);
+        $self->{HOSTS}{$id}{distance} =
           __host_distance_tag_hdlr($tag);    #returns simple value
-        $D{$$}{HOSTS}{$id}{trace}         = __host_trace_tag_hdlr($tag);
-        $D{$$}{HOSTS}{$id}{trace_error}   = __host_trace_error_tag_hdlr($tag);
+        $self->{HOSTS}{$id}{trace}         = __host_trace_tag_hdlr($tag);
+        $self->{HOSTS}{$id}{trace_error}   = __host_trace_error_tag_hdlr($tag);
     }
 
     #CREATE HOST OBJECT FOR USER
-    $D{$$}{HOSTS}{$id} = Nmap::Parser::Host->new( $D{$$}{HOSTS}{$id} );
+    $self->{HOSTS}{$id} = Nmap::Parser::Host->new( $self->{HOSTS}{$id} );
 
-    if ( $D{callback}{is_registered} ) {
-        &{ $D{callback}{coderef} }( $D{$$}{HOSTS}{$id} );
-        delete $D{$$}{HOSTS}{$id};
+    if ( $self->{callback}{is_registered} ) {
+        &{ $self->{callback}{coderef} }( $self->{HOSTS}{$id} );
+        delete $self->{HOSTS}{$id};
     }
 
     $twig->purge;
@@ -472,7 +454,6 @@ sub __host_os_tag_hdlr {
     my $portused_tag;
     my $os_fingerprint;
 
-    #if( $D{$$}{SESSION}{xml_version} eq "1.04")
     if ( defined $os_tag ) {
 
         #get the open port used to match os
