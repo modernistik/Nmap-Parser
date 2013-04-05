@@ -386,11 +386,11 @@ homepage can be found at: L<http://www.insecure.org/nmap/>.
 
 =head1 AUTHOR
 
-Anthony G Persaud <apersaud[at]gmail.com> L<http://anthonypersaud.com>
+Anthony Persaud <apersaud[at]gmail.com> L<http://modernistik.com>
 
-MySQL support added by:
-
+Additional features and improvements by:
 Robin Bowes <robin[at]robinbowes.com> L<http://robinbowes.com>
+Daniel Miller L<http://bonsaiviking.com/>
 
 =head1 COPYRIGHT
 

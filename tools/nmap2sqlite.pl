@@ -1,5 +1,5 @@
 #!/usr/bin/perl
-#Anthony G. Persaud
+#Anthony Persaud
 #nmap2sqlite.pl
 #Description:
 #	It takes in a nmap xml file and stores it into a SQLite database using DBI for
@@ -51,7 +51,7 @@ unless ( $G{file} || $G{scan} ) {
     pod2usage( -exitstatus => 0, -verbose => 2 );
 }
 
-print "\nnmap2sqlite.pl - ( http://anthonypersaud.com )\n",
+print "\nnmap2sqlite.pl - ( http://modernistik.com )\n",
   ( '-' x 50 ), "\n\n";
 
 if ( $G{scan} && $G{nmap} eq '' ) {
@@ -314,11 +314,11 @@ homepage can be found at: L<http://www.insecure.org/nmap/>.
 
 =head1 AUTHOR
 
-Anthony G Persaud L<http://anthonypersaud.com>
+Anthony Persaud L<http://modernistik.com>
 
 =head1 COPYRIGHT
 
-Copyright (c) <2003-2009> <Anthony G. Persaud>
+Copyright (c) <2003-2013> <Anthony Persaud>
 
 MIT License
 

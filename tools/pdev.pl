@@ -2,9 +2,7 @@
 
 =pod
 
-Anthony G Persaud L<http://anthonypersaud.com>
-
-Copyright (c) <2007> <Anthony G. Persaud>
+Copyright (c) <2013> <Anthony Persaud> L<http://modernistik.com>
 
 MIT License
 
@@ -401,10 +399,10 @@ sub _help {
    pdev>
   
 
-Anthony G Persaud L<http://anthonypersaud.com>
+Anthony Persaud L<http://modernistik.com>
 
 
-Copyright (c) <2003-2009> <Anthony G. Persaud>
+Copyright (c) <2003-2013> <Anthony Persaud>
 
 MIT License
 

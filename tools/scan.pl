@@ -1,5 +1,5 @@
 #!/usr/bin/perl
-#Anthony G. Persaud
+#Anthony Persaud
 
 use strict;
 use Nmap::Parser;
@@ -12,7 +12,7 @@ $G{nmap_exe} = find_exe();
 
 my $np = new Nmap::Parser;
 
-print "\nscan.pl - ( http://anthonypersaud.com )\n", ( '-' x 80 ), "\n\n";
+print "\nscan.pl - ( http://modernistik.com )\n", ( '-' x 80 ), "\n\n";
 
 GetOptions(
     'help|h|?' => \$G{helpme},
@@ -291,11 +291,11 @@ homepage can be found at: L<http://www.insecure.org/nmap/>.
 
 =head1 AUTHOR
 
-Anthony G Persaud L<http://anthonypersaud.com>
+Anthony Persaud L<http://modernistik.com>
 
 =head1 COPYRIGHT
 
-Copyright (c) <2003-2009> <Anthony G. Persaud>
+Copyright (c) <2003-2013> <Anthony Persaud>
 
 MIT License
 

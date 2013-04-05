@@ -1,10 +1,11 @@
 Revision history for Perl extension Nmap::Parser.
 
 Bleeding Edge version: http://apersaud.github.com/Nmap-Parser/
-		http://search.cpan.org/~apersaud/Nmap-Parser/
 
 For a full list of changes and contributors see: https://github.com/apersaud/Nmap-Parser/commits/master
 
+Changes for 1.31
+    - Eliminate global variables %D - thanks to bonsaiviking
 Changes for 1.30
     - Merged features of pull request #6 (bonsaiviking)
         https://github.com/apersaud/Nmap-Parser/commit/7ccf752af
@@ -49,7 +50,6 @@ Changes for 1.11
 	- Added ignoring of taskend,taskbegin and taskprogress information.
 	- Added tests for nmap 4.20.
 	- Changed lisence to MIT.
-	- Points to new website http://anthonypersaud.com/category/nmap-parser/
 
 Changes for 1.06
 	- Added patch for new OS fingerprint (Thanks Okan Demirmen)
@@ -329,7 +329,7 @@ Changes for 0.40
 
 COPYRIGHT AND LICENCE
 
-Copyright (C) 2003-2005 Anthony G Persaud L<http://anthonypersaud.com>
+Copyright (C) 2003-2013 Anthony Persaud L<http://modernistik.com>
 
 MIT License
 

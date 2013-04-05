@@ -3,7 +3,7 @@ package Nmap::Parser;
 use strict;
 use XML::Twig;
 
-our $VERSION = 1.30;
+our $VERSION = 1.31;
 
 
 sub new {
@@ -1885,7 +1885,7 @@ If you have questions about how to use the module, or any of its features, you
 can post messages to the Nmap::Parser module forum on CPAN::Forum.
 L<https://github.com/apersaud/Nmap-Parser/issues>
 
-=head2 Bug Reports and Enhancements
+=head2 Bug Reports, Enhancements, Merge Requests
 
 Please submit any bugs or feature requests to:
 L<https://github.com/apersaud/Nmap-Parser/issues>
@@ -1904,16 +1904,11 @@ homepage can be found at: L<http://www.insecure.org/nmap/>.
 
 =head1 AUTHORS
 
-Anthony G Persaud L<http://anthonypersaud.com> . Please see Changes file and CONTRIBUTORS file for a list of other great contributors.
-
-Additional Contributors:
- * Robin Bowes L<http://robinbowes.com>
- * Daniel Miller L<https://github.com/bonsaiviking>
- * See Changes file for other contributors.
+Origiinal author, Anthony Persaud L<http://modernistik.com>. However, special thanks to: Daniel Miller L<https://github.com/bonsaiviking> and Robin Bowes L<http://robinbowes.com>.
+Please see Changes file and CONTRIBUTORS file for a list of other great contributors.
 
 =head1 COPYRIGHT
-
-Copyright (c) <2003-2010> <Anthony G. Persaud>
+Copyright (c) <2003-2013> <Anthony Persaud> L<http://modernistik.com>
 
 MIT License
 

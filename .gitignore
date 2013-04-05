@@ -3,3 +3,4 @@ Makefile
 *.tar.gz
 pm_to_*
 blib
+/Makefile.old

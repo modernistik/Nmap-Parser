@@ -9,8 +9,6 @@ Installation
 =================================================================
 
 * Latest version: [https://github.com/apersaud/Nmap-Parser](https://github.com/apersaud/Nmap-Parser)
-* Website: [http://anthonypersaud.com/](http://anthonypersaud.com)
-
 
 Manual Install
 =================================================================
@@ -66,7 +64,7 @@ not really need the executable, but the xml output that you will be parsing
 Copyright and License
 =================================================================
 
-Copyright (C) 2003-2011 Anthony G Persaud L<http://anthonypersaud.com>
+Copyright (C) 2003-2011 Anthony Persaud L<http://modernistik.com>
 
 MIT License
 
