@@ -51,7 +51,7 @@ unless ( $G{file} || $G{scan} ) {
     pod2usage( -exitstatus => 0, -verbose => 2 );
 }
 
-print "\nnmap2sqlite.pl - ( http://modernistik.com )\n",
+print "\nnmap2sqlite.pl - ( http://apersaud.github.io/Nmap-Parser/ )\n",
   ( '-' x 50 ), "\n\n";
 
 if ( $G{scan} && $G{nmap} eq '' ) {

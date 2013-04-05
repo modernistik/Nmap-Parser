@@ -12,7 +12,7 @@ $G{nmap_exe} = find_exe();
 
 my $np = new Nmap::Parser;
 
-print "\nscan.pl - ( http://modernistik.com )\n", ( '-' x 80 ), "\n\n";
+print "\nscan.pl - ( http://apersaud.github.io/Nmap-Parser/ )\n", ( '-' x 80 ), "\n\n";
 
 GetOptions(
     'help|h|?' => \$G{helpme},
