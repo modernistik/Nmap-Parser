@@ -1,10 +1,11 @@
 Revision history for Perl extension Nmap::Parser.
 
-Bleeding Edge version: http://apersaud.github.com/Nmap-Parser/
+Bleeding Edge version: http://apersaud.github.io/Nmap-Parser/
 
 For a full list of changes and contributors see: https://github.com/apersaud/Nmap-Parser/commits/master
 
-Changes for 1.31
+Changes for 1.32
+    - Updated website: http://apersaud.github.io/Nmap-Parser/
     - Eliminate global variables %D - thanks to bonsaiviking
 Changes for 1.30
     - Merged features of pull request #6 (bonsaiviking)
