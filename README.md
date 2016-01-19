@@ -8,6 +8,7 @@ The latest version of this module can be found on here [http://modernistik.githu
 ## Overview
 Here is a samll example on how to use the module. You can view the more detailed API and examples in the POD documentation.
 
+```perl
     use Nmap::Parser;
     my $np = new Nmap::Parser;
 
@@ -19,10 +20,11 @@ Here is a samll example on how to use the module. You can view the more detailed
     my $host       = $np->get_host($ip_addr);
     my $service = $host->tcp_service(80);
     my $os         = $host->os_sig();
-
+```
 
 Another method is to setup callbacks for each section.
 
+```perl
     my $np2 = new Nmap::Parser;
 
     $np2->callback(\&my_callback);
@@ -35,14 +37,16 @@ Another method is to setup callbacks for each section.
 	    my $host = shift; #Nmap::Parser::Host object
     	#.. see documentation for all methods ...
     }
-    
+```   
    
 ## CPAN Installation (recommended)
 The easiest way to install a Perl module is to use span. Run this in the command prompt to install directly from CPAN (may need root priviledges):
 
+```bash
 	$ perl -MCPAN -e 'install Nmap::Parser'
 	# or cpan bin
 	$ cpan install Nmap::Parser
+```
 	
 ## Manual Install
 Download the file and unpack. This is usually done by:
