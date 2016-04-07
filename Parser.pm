@@ -1345,10 +1345,10 @@ Returns the version of nmap xml file.
 
 A basic call to prescripts() returns a list of the names of the NSE scripts
 run in the pre-scanning phase. If C<$name> is given, it returns the text output of the
-a reference to a hash with "output" and "content" keys for the
+a reference to a hash with "output" and "contents" keys for the
 script with that name, or undef if that script was not run.
 The value of the "output" key is the text output of the script. The value of the
-"content" key is a data structure based on the XML output of the NSE script.
+"contents" key is a data structure based on the XML output of the NSE script.
 
 =item B<postscripts()>
 
@@ -1356,10 +1356,10 @@ The value of the "output" key is the text output of the script. The value of the
 
 A basic call to postscripts() returns a list of the names of the NSE scripts
 run in the post-scaning phase. If C<$name> is given, it returns the text output of the
-a reference to a hash with "output" and "content" keys for the
+a reference to a hash with "output" and "contents" keys for the
 script with that name, or undef if that script was not run.
 The value of the "output" key is the text output of the script. The value of the
-"content" key is a data structure based on the XML output of the NSE script.
+"contents" key is a data structure based on the XML output of the NSE script.
 
 =back
 
@@ -1500,10 +1500,10 @@ when the scan was performed.
 
 A basic call to hostscripts() returns a list of the names of the host scripts
 run. If C<$name> is given, it returns the text output of the
-a reference to a hash with "output" and "content" keys for the
+a reference to a hash with "output" and "contents" keys for the
 script with that name, or undef if that script was not run.
 The value of the "output" key is the text output of the script. The value of the
-"content" key is a data structure based on the XML output of the NSE script.
+"contents" key is a data structure based on the XML output of the NSE script.
 
 =item B<tcp_ports()>
 
@@ -1636,10 +1636,10 @@ Returns the version of the given product of the running service.
 
 A basic call to scripts() returns a list of the names of the NSE scripts
 run for this port. If C<$name> is given, it returns
-a reference to a hash with "output" and "content" keys for the
+a reference to a hash with "output" and "contents" keys for the
 script with that name, or undef if that script was not run.
 The value of the "output" key is the text output of the script. The value of the
-"content" key is a data structure based on the XML output of the NSE script.
+"contents" key is a data structure based on the XML output of the NSE script.
 
 =back
 
