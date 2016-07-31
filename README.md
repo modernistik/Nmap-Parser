@@ -5,6 +5,10 @@ This module implements a interface to the information contained in an nmap scan.
 
 The latest version of this module can be found on here [http://modernistik.github.com/Nmap-Parser/](http://modernistik.github.com/Nmap-Parser/)
 
+### Code Status
+[![CPAN version](https://badge.fury.io/pl/Nmap-Parser.svg)](https://badge.fury.io/pl/Nmap-Parser)
+[![Build Status](https://travis-ci.org/modernistik/Nmap-Parser.svg?branch=master)](https://travis-ci.org/modernistik/Nmap-Parser)
+
 ## Overview
 Here is a small example on how to use the module. You can view the more detailed API and examples in the POD documentation.
 
