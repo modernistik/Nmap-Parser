@@ -6,7 +6,7 @@ This module implements a interface to the information contained in an nmap scan.
 The latest version of this module can be found on here [http://modernistik.github.com/Nmap-Parser/](http://modernistik.github.com/Nmap-Parser/)
 
 ## Overview
-Here is a samll example on how to use the module. You can view the more detailed API and examples in the POD documentation.
+Here is a small example on how to use the module. You can view the more detailed API and examples in the POD documentation.
 
 ```perl
     use Nmap::Parser;
@@ -38,7 +38,7 @@ Another method is to setup callbacks for each section.
     	#.. see documentation for all methods ...
     }
 ```   
-   
+
 ## CPAN Installation (recommended)
 The easiest way to install a Perl module is to use span. Run this in the command prompt to install directly from CPAN (may need root priviledges):
 
@@ -47,7 +47,7 @@ The easiest way to install a Perl module is to use span. Run this in the command
 	# or cpan bin
 	$ cpan install Nmap::Parser
 ```
-	
+
 ## Manual Install
 Download the file and unpack. This is usually done by:
 
@@ -55,6 +55,7 @@ Download the file and unpack. This is usually done by:
 
 Where x.xx is the version number. Next change into the newly created directory. To install this module type the following:
 
+  $ cpanm --quiet --installdeps --notest .
 	$ perl Makefile.PL
 	$ make
 	$ make test
@@ -72,26 +73,26 @@ To install it on Windows, you may need to have installed the ActiveState Perl Pa
 	ppm install Nmap-Parser
 
 This should contact the ActiveState respository, download the file and install it automagically.
-	
+
 ### Dependencies
 This module requires these other modules and libraries:
 
 * XML::Twig 3.16+
 * Storable (comes with Perl 5+)
-	
+
 In addition, you will need nmap 3.00+. You don't exactly need it, but this
 version of nmap supports the xml output that this module can parse. So, you do
 not really need the executable, but the xml output that you will be parsing
 (or able to parse), must be from this version onward.
 
 ### Issues, Bugs and Feature Requests
-Please submit any bugs or feature requests to: [https://github.com/apersaud/Nmap-Parser/issues](https://github.com/apersaud/Nmap-Parser/issues)
+Please submit any bugs or feature requests to: [https://github.com/modernistik/Nmap-Parser/issues](https://github.com/modernistik/Nmap-Parser/issues)
 
 Please make sure that you submit the xml-output file of the scan which you are having
 trouble with. This can be done by running your scan with the `-oX filename.xml` nmap switch. Please remove any important IP addresses for security reasons. It saves time in reproducing issues.
 
 ### Copyright and License
-Copyright (C) 2003-2011 Anthony Persaud [http://www.modernistik.com](http://www.modernistik.com)
+Copyright (C) 2003-2016 Anthony Persaud [http://www.modernistik.com](http://www.modernistik.com)
 
 MIT License
 
