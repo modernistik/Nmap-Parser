@@ -383,6 +383,10 @@ sub __host_port_tag_hdlr {
           || 'unknown'
           if ( $state ne '' );
 
+        $port_hashref->{$proto}{$portid}{reason_ttl} = $state->{att}->{reason_ttl}
+          || 'unknown'
+          if($state ne '');
+
         #GET SERVICE INFORMATION
         $port_hashref->{$proto}{$portid}{service} =
           __host_service_tag_hdlr( $port_tag, $portid )
@@ -878,12 +882,23 @@ sub _get_port_state {
 
 }
 
+sub _get_port_state_ttl {
+    my $self = shift;
+    my $proto = pop;
+    my $portid = lc(shift);
+
+    return undef unless ( exists $self->{ports}{$proto}{$portid} );
+    return $self->{ports}{$proto}{$portid}{reason_ttl};
+}
+
 #changed this to use _get_ports since it was similar code
 sub tcp_ports { return _get_ports( @_, 'tcp' ); }
 sub udp_ports { return _get_ports( @_, 'udp' ); }
 
 sub tcp_port_count { return $_[0]->{ports}{tcp_port_count}; }
 sub udp_port_count { return $_[0]->{ports}{udp_port_count}; }
+
+sub tcp_port_state_ttl { return _get_port_state_ttl( @_, 'tcp' ); }
 
 sub tcp_port_state { return _get_port_state( @_, 'tcp' ); }
 sub udp_port_state { return _get_port_state( @_, 'udp' ); }
@@ -1523,6 +1538,10 @@ be counted as an 'open' port as well as a 'filtered' one.>
 =item B<udp_port_count()>
 
 Returns the total of TCP|UDP ports scanned respectively.
+
+=item B<tcp_port_state_ttl()>
+
+Returns the 'reason_ttl' value present in nmap xml result.
 
 =item B<tcp_del_ports($portid, [$portid, ...])>
 
