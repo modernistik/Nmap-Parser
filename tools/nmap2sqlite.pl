@@ -51,7 +51,7 @@ unless ( $G{file} || $G{scan} ) {
     pod2usage( -exitstatus => 0, -verbose => 2 );
 }
 
-print "\nnmap2sqlite.pl - ( http://apersaud.github.io/Nmap-Parser/ )\n",
+print "\nnmap2sqlite.pl - ( https://github.com/modernistik/Nmap-Parser )\n",
   ( '-' x 50 ), "\n\n";
 
 if ( $G{scan} && $G{nmap} eq '' ) {
@@ -216,7 +216,7 @@ Here is the schema for the table stored in the SQLite database
 
 =head1 OPTIONS
 
-These options are passed as command line parameters. Please use EITHER --scan or --xml. NOT both. 
+These options are passed as command line parameters. Please use EITHER --scan or --xml. NOT both.
 
 =over 4
 
@@ -238,7 +238,7 @@ This will use parsescan() for the scan and take the arguments as IP addreses.
 
 =item B<--table TABLE_NAME>
 
-Sets the table name to use in the database as TABLE_NAME. 
+Sets the table name to use in the database as TABLE_NAME.
 
 =item B<--xml>
 
@@ -275,7 +275,7 @@ Examples:
  nmap2sqlite.pl --scan 10.210.*.1-127
  nmap2sqlite.pl --scan *.*.2.3-5
  nmap2sqlite.pl --scan 10.[10-15].10.[2-254]
-  
+
 
 =head1 OUTPUT EXAMPLE
 

@@ -1,11 +1,15 @@
 Revision history for Perl extension Nmap::Parser.
 
-Bleeding Edge version: http://apersaud.github.io/Nmap-Parser/
+Bleeding Edge version: https://github.com/modernistik/Nmap-Parser
 
 For a full list of changes and contributors see: https://github.com/apersaud/Nmap-Parser/commits/master
 
+Changes for 1.33
+    - Add tcp_port_state_ttl() function for export from nmap xml results. Thanks to @matrix.
+    - Document fixes thanks to @zOrg1331
+
 Changes for 1.32
-    - Updated website: http://apersaud.github.io/Nmap-Parser/
+    - Updated website: https://github.com/modernistik/Nmap-Parser
     - Eliminate global variables %D - thanks to bonsaiviking
 Changes for 1.30
     - Merged features of pull request #6 (bonsaiviking)
