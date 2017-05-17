@@ -70,7 +70,6 @@ not have root access use `perl Makefile.PL PREFIX=/install/path`, where
 `/install/path` is the directory in which you want to install the module. Note
 that you should then use the "use lib '/install/path'" in your scripts.
 
-
 ## ActiveState Perl (Windows only)
 To install it on Windows, you may need to have installed the ActiveState Perl Package Manager (PPM). Run this in the command prompt:
 
@@ -94,6 +93,16 @@ Please submit any bugs or feature requests to: [https://github.com/modernistik/N
 
 Please make sure that you submit the xml-output file of the scan which you are having
 trouble with. This can be done by running your scan with the `-oX filename.xml` nmap switch. Please remove any important IP addresses for security reasons. It saves time in reproducing issues.
+
+### Releasing
+To release a new version of the module, update the version number in Parser.pm and type the following commands:
+
+  $ perl Makefile.PL
+  $ make
+  $ make test
+  $ make dist
+
+This will generate a `tar.gz` to upload to https://pause.perl.org.
 
 ### Copyright and License
 Copyright (C) 2003-2016 Anthony Persaud [http://www.modernistik.com](https://www.modernistik.com)
