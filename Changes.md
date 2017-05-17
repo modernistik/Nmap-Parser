@@ -2,74 +2,76 @@ Revision history for Perl extension Nmap::Parser.
 
 Bleeding Edge version: https://github.com/modernistik/Nmap-Parser
 
-For a full list of changes and contributors see: https://github.com/apersaud/Nmap-Parser/commits/master
+For a full list of changes and contributors see: https://github.com/modernistik/Nmap-Parser/commits/master
 
-Changes for 1.33
+### Changes for 1.34
+    - Added devicetype thanks to @jcrochon (Pull #16)
+
+### Changes for 1.33
     - Add tcp_port_state_ttl() function for export from nmap xml results. Thanks to @matrix.
     - Document fixes thanks to @zOrg1331
 
-Changes for 1.32
+### Changes for 1.32
     - Updated website: https://github.com/modernistik/Nmap-Parser
     - Eliminate global variables %D - thanks to bonsaiviking
-Changes for 1.30
+### Changes for 1.30
     - Merged features of pull request #6 (bonsaiviking)
-        https://github.com/apersaud/Nmap-Parser/commit/7ccf752af
+        https://github.com/modernistik/Nmap-Parser/commit/7ccf752af
     - Allow osclass elements within osmatch, Nmap XML format changed in 6.00
 
-Changes for 1.21
+### Changes for 1.21
     - Added support for hostscript and script tags
     - Changed ipv4_sort() to use a 10x faster sort method
 
-Changes for 1.20
+### Changes for 1.20
 	- Solved Issue 2: Host-specific start_time and end_time.
 	- Applied Patch provided by briandlong on retrieving start_time and end_time attributes for host.
-	- Solved Issue 6: _del_port not removing port 0.
+	- Solved Issue 6: \_del_port not removing port 0.
 	- Thomas Equeter submitted patch to support traceroute in nmap output.
 
-Changes for 1.19
+### Changes for 1.19
 	- Added enhancement request by stevekatieterabyte for tcp_del_port and udp_del_port
 	  (Thanks!). Modified the patch to work with a list of ports.
 	- Added Robin Bowes' modification of nmap2sqlite as nmap2db to support MySQL (Thanks!)
 
-Changes for 1.16
+### Changes for 1.16
 	- Fixed minor bug in scanner.t where the number of tests to skip when nmap was not found was incorrect.
-	- Repackaged to remove all the ._* files from the package.
+	- Repackaged to remove all the .\_* files from the package.
 	- Fixed POD errors and added more documentation
 
-Changes for 1.14
+### Changes for 1.14
 	- Added cache_scan() to save the output of a parsescan() to a file before parsing.
 	- Added new tests for servicefp fingerpriting and cache_scan().
 	- Ran PerlTidy against module and other tools
 	- Updated documentation
 
-Changes for 1.13
+### Changes for 1.13
 	- Added fingerprint() to Service object (thanks jpomiane)
 	- Added documentation.
 
-Changes for 1.12
+### Changes for 1.12
 	- Added references to Google Code Project page.
 
-Changes for 1.11
+### Changes for 1.11
 	- Added parsing of distance information.
 	- Fixed bug #1671876 on tcp_service() always returning null
 	- Added ignoring of taskend,taskbegin and taskprogress information.
 	- Added tests for nmap 4.20.
 	- Changed lisence to MIT.
 
-Changes for 1.06
+### Changes for 1.06
 	- Added patch for new OS fingerprint (Thanks Okan Demirmen)
 	- New os_fingerprint() method for Nmap::Parser::Host::OS
 	- Updated documentation
 	- Updated scan.pl to also read xml files (good for debugging)
 
-Changes for 1.05
+### Changes for 1.05
 	- Major speed improvements (less compile time)
 	- Major reduction in unwanted memory usage
-	- Redundant functions (or less used functions) are now created
-	dynamically. (AUTOLOAD)
+	- Redundant functions (or less used functions) are now created dynamically. (AUTOLOAD)
 	- Documentation fixes
 
-Changes for 1.00
+### Changes for 1.00
 	- To see the changes, please read over the new documentation
 		- Internal code is much (MUCH) cleaner and readable
 		- removed 'ducttape' fixes and made stable & roubust changes
@@ -100,7 +102,7 @@ Changes for 1.00
 	- rewrote old tools to fit new framework
 	- Fully updated documentation
 
-Changes for 0.80
+### Changes for 0.80
 	- Support for multiple instances of Nmap::Parser objects without overwriting data
 	- All data (except filters) is are localized per object
 	- The use of Storable (dclone) to correctly make duplicate of data structured
@@ -108,7 +110,7 @@ Changes for 0.80
 	- Nmap::Parser::XML no longer supported in distribution
 		(you should change all calls to Nmap::Parser::XML to Nmap::Parser)
 
-Changes for 0.79
+### Changes for 0.79
 	- fixed ports that were declared as 'open|filtered'
 		these now are counted as both 'open' and 'filtered'
 		when using tcp_ports() and udp_ports().
@@ -119,20 +121,20 @@ Changes for 0.79
 	- updated for Nmap 3.81
 	- documentation changes
 
-Changes for 0.78
+### Changes for 0.78
 	- updated documentation - now included tcp/udp service product
 	- added new methods for new nmap command switch (-A)
 		mac_addr, mac_vendor, ipv4_addr
 	- verified xml format is still valid for nmap 3.55
 
-Changes for 0.77
+### Changes for 0.77
 	- updated documentation
 	- added patches from Jeremy S.
 	- tcp_service and udp_service tunnel, accuracy, confidence
 	- os_accuracy method implemented
 	- added ident/owner information
 
-Changes for 0.76
+### Changes for 0.76
 	- new module name: Nmap::Parser
 	- leagcy file still ok to use for now: Nmap::Parser::XML
 	- fixed problem using 'our' with older versions of perl
@@ -140,7 +142,7 @@ Changes for 0.76
 	- you can extract owner information from running -I scanning
 		tcp_service_owner and udp_service_owner
 
-Changes for 0.74
+### Changes for 0.74
 	- fixed ip address input bug
 	- updated example scripts
 	- fixed nmap not found bug
@@ -164,12 +166,12 @@ Changes for 0.74
 		nmap 3.50+ for the version scanning.
 	- updated parser tests, to check for sorted ip order
 
-Changes for 0.73
+### Changes for 0.73
 	- removed safe_* functions and placed them in the actual parsing
 	functions. (I don't think they were never used.
 	- updated BUG REPORT information
 
-Changes for 0.72
+### Changes for 0.72
 	- removed IGNORE_ADDPORTS constant
 	- added contribution from Sebastian: nmap2csv.
 	- edited the links to the sourceforge project site.
@@ -179,24 +181,24 @@ Changes for 0.72
 	- fixed some example scripts
 	- added more tests for the new functionality
 
-Changes for 0.71
+### Changes for 0.71
 	- fixed a small bug in the installation under MSWin32 (PM_FILTER) which
 	caused all tests to fail. (It was removing things that weren't comments.
 
-Changes for 0.70
+### Changes for 0.70
 	- updated changes from 0.69
 	- updated documentation
 	- fixed documentation bug of all the example scripts
 	- updated examples script: they are more robust. Can either take
 		the example file as input, or actually run scans.
 
-Changes for 0.69
+### Changes for 0.69
 	- new utility script : scan_host.pl
 	- added EXAMPLES seciton in documentation
 	- parses new 'version', 'extrainfo', and 'product'
 		att from service tag (3.40+)
-	- added *_service_version to *::Host
-	- added xml_version to *::ScanInfo
+	- added \*\_service_version to \*::Host
+	- added xml_version to \*::ScanInfo
 	- more error prevention mechanisms
 	- added os_osfamily, os_gen, os_vendor, os_type added
 	- added OSINFO filter
@@ -212,7 +214,7 @@ Changes for 0.69
 		tcptssequence_class, tcptssequence_values
 
 
-Changes for 0.68
+### Changes for 0.68
 	- Licensing changes, now under GPL
 	- added signatures for wireless access points (wap)
 	- added os_match shortcut function
@@ -237,7 +239,7 @@ Changes for 0.68
 	- no more wantarray usage for tcp_ports and udp_ports
 	- more test cases
 
-Changes for 0.66
+### Changes for 0.66
 	- added short-cut function hostname() to return first hostname
 	- added preliminary callback functionality (for registering events).
 		This includes register_host_callback, and reset_host_callback
@@ -250,21 +252,21 @@ Changes for 0.66
 	- POD fixes.
 	- speed improvements
 
-Changes for 0.64
+### Changes for 0.64
 	- nmaprun filter bug fixed
 	- important documentation changes
 
-Changes for 0.63
+### Changes for 0.63
 	- added vendor to os_class
 	- fixed division by zero on one of the efficiency test.
 	- it now checks to make sure Time::HiRes is installed before
 		performing tests.
 	- minor warning problems removed on Win32 systems.
 
-Changes for 0.62
+### Changes for 0.62
 	- stable release with all new changes.
 
-Changes for 0.6_4
+### Changes for 0.6_4
 	- changes to parse filter tags. All previously called PARSE_* have
 		the PARSE_ removed from them. Ex: PARSE_OSFAMILY is now
 		OSFAMILY.
@@ -278,23 +280,23 @@ Changes for 0.6_4
 	- permanently excluding some static tags using ignore_elts.
 	- added SCANINFO filter.
 
-Changes for 0.60_3
+### Changes for 0.60_3
 	- os_port_used, now can return the open or closed port used in OS
 		detection depending on the given parameter.
 
-Changes for 0.60_2
+### Changes for 0.60_2
 	- Bug #2968:
 		fixed bogus 'use 5.008' in Makefile.PL (runs on 5.6 also)
 		instead using 5.004
 		fixed minor warnings when compiling with -w
-		added 'use warnings' to _methods test
+		added 'use warnings' to \_methods test
 
-Changes for 0.60_1
+### Changes for 0.60_1
 	- fixed a bug with the test script (finding test file)
 	- made a separate test to test the actual method existance
 	- portability when running the tests using File::Spec.
 
-Changed for 0.60
+### Changed for 0.60
 	- better memory management using twig_roots
 	- some bugs with output types and filters
 	- generic_os and all references are now refereed to as 'osfamily'
@@ -310,7 +312,7 @@ Changed for 0.60
 	- additions to Nmap::Parser::Host methods
 		tcpsequence, ipidsequence, tcptssequence
 
-Changes for 0.50
+### Changes for 0.50
 	- faster loading module
 	- added more documentation
 	- minor speed improvements
@@ -321,20 +323,20 @@ Changes for 0.50
 		changed hostnames() to take a value a number (see doc)
 		changed os_matches() to take a value a number (see doc)
 
-Changes for 0.40
+### Changes for 0.40
 	- added new package called ScanInfo (Nmap::Parser::ScanInfo
 			this contains methods that make it easier to access the
 			scan information
 	- added new package called Host (Nmap::Parser::Host),
 		which makes it easier to access values for each of the
 		hosts found. See documentation.
-		Host trees are now full of these *::Host objects.
+		Host trees are now full of these \*::Host objects.
 	- fixed minor bugs with parsing the xml files.
-	- some memory usage improvments.
+	- some memory usage improvements.
 
-COPYRIGHT AND LICENCE
+COPYRIGHT AND LICENSE
 
-Copyright (C) 2003-2013 Anthony Persaud L<http://modernistik.com>
+Copyright (C) 2003-2017 Anthony Persaud L<https://www.modernistik.com>
 
 MIT License
 

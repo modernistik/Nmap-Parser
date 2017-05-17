@@ -3,7 +3,7 @@ package Nmap::Parser;
 use strict;
 use XML::Twig;
 
-our $VERSION = 1.33;
+our $VERSION = 1.34;
 
 
 sub new {

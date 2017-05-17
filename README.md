@@ -96,7 +96,7 @@ Please make sure that you submit the xml-output file of the scan which you are h
 trouble with. This can be done by running your scan with the `-oX filename.xml` nmap switch. Please remove any important IP addresses for security reasons. It saves time in reproducing issues.
 
 ### Copyright and License
-Copyright (C) 2003-2016 Anthony Persaud [http://www.modernistik.com](http://www.modernistik.com)
+Copyright (C) 2003-2016 Anthony Persaud [http://www.modernistik.com](https://www.modernistik.com)
 
 MIT License
 
