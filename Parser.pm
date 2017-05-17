@@ -421,14 +421,12 @@ sub __host_service_tag_hdlr {
     $service_hashref->{port} = $portid;
 
     if ( defined $service ) {
-        $service_hashref->{name}      = $service->{att}->{name} || 'unknown';
-        $service_hashref->{version}   = $service->{att}->{version};
-        $service_hashref->{product}   = $service->{att}->{product};
-        $service_hashref->{extrainfo} = $service->{att}->{extrainfo};
-        $service_hashref->{proto} =
-             $service->{att}->{proto}
-          || $service->{att}->{protocol}
-          || 'unknown';
+        $service_hashref->{name}        = $service->{att}->{name} || 'unknown';
+        $service_hashref->{version}     = $service->{att}->{version};
+        $service_hashref->{product}     = $service->{att}->{product};
+	$service_hashref->{devicetype}  = $service->{att}->{devicetype};
+        $service_hashref->{extrainfo}   = $service->{att}->{extrainfo};
+        $service_hashref->{proto}       = $service->{att}->{proto} || $service->{att}->{protocol} || 'unknown';
         $service_hashref->{rpcnum}      = $service->{att}->{rpcnum};
         $service_hashref->{tunnel}      = $service->{att}->{tunnel};
         $service_hashref->{method}      = $service->{att}->{method};
