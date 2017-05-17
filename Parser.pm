@@ -424,6 +424,7 @@ sub __host_service_tag_hdlr {
         $service_hashref->{name}      = $service->{att}->{name} || 'unknown';
         $service_hashref->{version}   = $service->{att}->{version};
         $service_hashref->{product}   = $service->{att}->{product};
+	$service_hashref->{devicetype} = $service->{att}->{devicetype};
         $service_hashref->{extrainfo} = $service->{att}->{extrainfo};
         $service_hashref->{proto} =
              $service->{att}->{proto}
