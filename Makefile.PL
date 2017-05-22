@@ -10,13 +10,24 @@ my %depends = (
 );
 
 WriteMakefile(
-    ABSTRACT => 'parse nmap scan data with perl',
+    ABSTRACT => 'Parse nmap scan data with perl',
     AUTHOR   => 'Anthony Persaud',
+    LICENSE  => 'mit',
     clean    => { FILES => "*.tar *.old pod2htm* *.htm*" },
 
     #EXE_FILES   	=> [ map {"tools/$_"} @programs], #soon
     NAME         => 'Nmap::Parser',
     PREREQ_PM    => \%depends,
-    VERSION_FROM => 'Parser.pm'       # finds $VERSION
+    VERSION_FROM => 'Parser.pm',      # finds $VERSION
+    META_MERGE   => {
+        "meta-spec" => { version => 2 },
+        resources => {
+            repository => {
+                url  => 'git://github.com/modernistik/Nmap-Parser',
+                web  => 'https://github.com/modernistik/Nmap-Parser',
+                type => 'git',
+            },
+        },
+    },
 );
 
