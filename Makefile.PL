@@ -21,13 +21,9 @@ WriteMakefile(
     VERSION_FROM => 'Parser.pm',      # finds $VERSION
     META_MERGE   => {
         "meta-spec" => { version => 2 },
+        homepage    => 'https://github.com/modernistik/Nmap-Parser',
         resources => {
-            repository => {
-                url  => 'git://github.com/modernistik/Nmap-Parser',
-                web  => 'https://github.com/modernistik/Nmap-Parser',
-                type => 'git',
-            },
+            repository => "https://github.com/modernistik/Nmap-Parser",
         },
     },
 );
-
