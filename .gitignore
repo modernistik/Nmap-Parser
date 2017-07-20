@@ -5,3 +5,4 @@ pm_to_*
 blib
 /Makefile.old
 /.DS_Store
+*.bak

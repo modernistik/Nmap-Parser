@@ -3,7 +3,7 @@ package Nmap::Parser;
 use strict;
 use XML::Twig;
 
-our $VERSION = 1.34;
+our $VERSION = 1.35;
 
 
 sub new {
@@ -1926,7 +1926,7 @@ homepage can be found at: L<http://www.insecure.org/nmap/>.
 =head1 AUTHORS
 
 Origiinal author, Anthony Persaud L<https://www.modernistik.com>. However, special thanks to: Daniel Miller L<https://github.com/bonsaiviking> and Robin Bowes L<http://robinbowes.com>.
-Please see Changes file and CONTRIBUTORS file for a list of other great contributors.
+Please see Changes.md file for a list of other great contributors.
 
 =head1 COPYRIGHT
 Copyright (c) <2003-2017> <Anthony Persaud> L<https://www.modernistik.com>

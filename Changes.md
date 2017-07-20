@@ -4,6 +4,9 @@ Bleeding Edge version: https://github.com/modernistik/Nmap-Parser
 
 For a full list of changes and contributors see: https://github.com/modernistik/Nmap-Parser/commits/master
 
+### Changes for 1.35
+    - Updated build configuration thanks to @mperry2 (Pull #17)
+
 ### Changes for 1.34
     - Added devicetype thanks to @jcrochon (Pull #16)
 
