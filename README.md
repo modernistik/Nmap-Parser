@@ -107,7 +107,7 @@ To release a new version of the module, update the version number in Parser.pm a
 This will generate a `tar.gz` to upload to https://pause.perl.org.
 
 ### Copyright and License
-Copyright (C) 2003-2016 Anthony Persaud [http://www.modernistik.com](https://www.modernistik.com)
+Copyright (C) 2003-2018 Anthony Persaud [https://www.modernistik.com](https://www.modernistik.com)
 
 MIT License
 
