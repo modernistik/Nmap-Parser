@@ -4,11 +4,14 @@ Bleeding Edge version: https://github.com/modernistik/Nmap-Parser
 
 For a full list of changes and contributors see: https://github.com/modernistik/Nmap-Parser/commits/master
 
+### Changes for 1.37
+    - Added starttime attributes and subroutine thanks to @jcrochon (PR #19)
+
 ### Changes for 1.35
-    - Updated build configuration thanks to @mperry2 (Pull #17)
+    - Updated build configuration thanks to @mperry2 (PR #17)
 
 ### Changes for 1.34
-    - Added devicetype thanks to @jcrochon (Pull #16)
+    - Added devicetype thanks to @jcrochon (PR #16)
 
 ### Changes for 1.33
     - Add tcp_port_state_ttl() function for export from nmap xml results. Thanks to @matrix.
