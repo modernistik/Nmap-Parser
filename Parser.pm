@@ -280,6 +280,9 @@ sub _host_tag_hdlr {
     #GET HOSTNAMES
     $self->{HOSTS}{$id}{hostnames} = __host_hostnames_tag_hdlr($tag);
 
+    #GET STARTTIME
+    $self->{HOSTS}{$id}{starttime} = $tag->{att}->{starttime};
+
     #GET STATUS
     $self->{HOSTS}{$id}{status} = $tag->first_child('status')->{att}->{state};
 
@@ -768,6 +771,8 @@ sub new {
     bless( $self, $class );
     return $self;
 }
+
+sub starttime { return $_[0]->{starttime}; }
 
 sub status { return $_[0]->{status}; }
 
